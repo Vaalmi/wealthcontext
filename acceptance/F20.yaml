@@ -1,0 +1,113 @@
+version: 1
+id: F20
+question: Why is a zero-asset household indeterminate?
+scenario: B2
+category: financial
+principal:
+  id: ADV-01
+  role: advisor
+request_time: '2026-11-01T12:00:00Z'
+valuation_date: '2026-10-16'
+known_as_of: '2026-10-31T16:00:00Z'
+household_ids:
+- WC-HH-0001
+authoritative_sources:
+  membership_reporting: CRM
+  quantity_cash: PAS trade-date snapshots
+  price: Custody latest eligible EOD close
+  fx: Same-day USD conversion fix; USD identity 1
+received_records:
+- source_system: CRM
+  feed: crm
+  business_date: '2026-10-16'
+  recorded_at: '2026-10-16T22:00:00Z'
+  source_record_ids:
+  - household-WC-HH-0001
+  observation: Household, membership and reporting assertions determine included managed accounts.
+- source_system: PAS-A
+  feed: pas_snapshots
+  business_date: '2026-10-16'
+  recorded_at: '2026-10-16T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-A accounts.
+- source_system: PAS-B
+  feed: pas_snapshots
+  business_date: '2026-10-16'
+  recorded_at: '2026-10-16T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-B accounts.
+- source_system: CUSTODY-A
+  feed: prices
+  business_date: '2026-10-16'
+  recorded_at: '2026-10-16T22:00:00Z'
+  source_record_ids: []
+  observation: Received close observations; secondary PAS quotes never replace custody pricing.
+missing_records: []
+requests:
+- alias: snapshot
+  tool: get_household_snapshot
+  arguments:
+    as_of: '2026-10-16'
+    known_as_of: '2026-10-31T16:00:00Z'
+    household_id: WC-HH-0001
+  status: COMPLETE
+  metric_refs:
+  - MV_POSITION@1
+  - CASH_USD@1
+  - HOUSEHOLD_ASSETS@1
+- alias: book
+  tool: get_concentrated_positions
+  arguments:
+    as_of: '2026-10-16'
+    known_as_of: '2026-10-31T16:00:00Z'
+    household_id: WC-HH-0001
+    threshold_pct: '10.00'
+  status: INCOMPLETE
+  metric_refs:
+  - MV_POSITION@1
+  - CASH_USD@1
+  - HOUSEHOLD_ASSETS@1
+  - ISSUER_EXPOSURE@1
+  - CONCENTRATION@1
+required_facts:
+- request: snapshot
+  entity_type: household
+  entity_id: WC-HH-0001
+  field: assets_usd
+  value: '0.00'
+  unit: USD
+  household_id: WC-HH-0001
+  valuation_date: '2026-10-16'
+  known_as_of: '2026-10-31T16:00:00Z'
+required_predicates:
+- request: snapshot
+  entity_type: household
+  entity_id: WC-HH-0001
+  kind: completeness
+  field: status
+  expect: COMPLETE
+- request: book
+  entity_type: result_summary
+  entity_id: $book.result_id
+  kind: completeness
+  field: status
+  expect: INCOMPLETE
+required_caveats: []
+result_checks:
+- request: book
+  path: data.indeterminate.*.reason
+  value: NON_POSITIVE_ASSETS
+  comparison: equals
+- request: book
+  path: data.breaches
+  value: []
+  comparison: equals
+required_mentions: []
+forbidden_mentions: []
+expected_refusal: null
+manual_checks:
+- Verified zero-row PAS manifests for both included accounts make assets exactly0, not unavailable. A
+  zero denominator cannot yield any concentration percentage; household is indeterminate.
+setup: []
+limitations: []
+required_source_disclosure: false

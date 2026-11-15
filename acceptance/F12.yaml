@@ -1,0 +1,134 @@
+version: 1
+id: F12
+question: How were foreign holdings converted to USD?
+scenario: S10
+category: financial
+principal:
+  id: COMP-01
+  role: compliance
+request_time: '2026-11-01T12:00:00Z'
+valuation_date: '2026-09-30'
+known_as_of: '2026-10-31T16:00:00Z'
+household_ids:
+- WC-HH-0010
+authoritative_sources:
+  membership_reporting: CRM
+  quantity_cash: PAS trade-date snapshots
+  price: Custody latest eligible EOD close
+  fx: Same-day USD conversion fix; USD identity 1
+received_records:
+- source_system: CRM
+  feed: crm
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - household-WC-HH-0010
+  observation: Household, membership and reporting assertions determine included managed accounts.
+- source_system: PAS-A
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-A accounts.
+- source_system: PAS-B
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-B accounts.
+- source_system: CUSTODY-A
+  feed: prices
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - price-WC-SEC-0019
+  observation: Authoritative custody CAD close for security 0019.
+- source_system: FX
+  feed: fx
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - fx-USD
+  - fx-EUR
+  - fx-CAD
+  - fx-GBP
+  observation: Received same-day USD/EUR/CAD/GBP conversion fixes.
+- source_system: CUSTODY-B
+  feed: prices
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - price-WC-SEC-0018
+  - price-WC-SEC-0020
+  observation: Authoritative custody EUR/GBP closes for securities 0018/0020.
+missing_records: []
+requests:
+- alias: snapshot
+  tool: get_household_snapshot
+  arguments:
+    as_of: '2026-09-30'
+    known_as_of: '2026-10-31T16:00:00Z'
+    household_id: WC-HH-0010
+  status: COMPLETE
+  metric_refs:
+  - MV_POSITION@1
+  - CASH_USD@1
+  - HOUSEHOLD_ASSETS@1
+required_facts:
+- request: snapshot
+  entity_type: household
+  entity_id: WC-HH-0010
+  field: assets_usd
+  value: '1230.00'
+  unit: USD
+  household_id: WC-HH-0010
+  valuation_date: '2026-09-30'
+  known_as_of: '2026-10-31T16:00:00Z'
+- request: snapshot
+  entity_type: household
+  entity_id: WC-HH-0010
+  field: cash_usd
+  value: '410.00'
+  unit: USD
+  household_id: WC-HH-0010
+  valuation_date: '2026-09-30'
+  known_as_of: '2026-10-31T16:00:00Z'
+- request: snapshot
+  entity_type: position
+  entity_id: WC-AC-0019:WC-SEC-0018
+  field: fx_rate
+  value: '1.10'
+  unit: fx_rate
+  household_id: WC-HH-0010
+  valuation_date: '2026-09-30'
+  known_as_of: '2026-10-31T16:00:00Z'
+- request: snapshot
+  entity_type: position
+  entity_id: WC-AC-0019:WC-SEC-0019
+  field: fx_rate
+  value: '0.75'
+  unit: fx_rate
+  household_id: WC-HH-0010
+  valuation_date: '2026-09-30'
+  known_as_of: '2026-10-31T16:00:00Z'
+- request: snapshot
+  entity_type: position
+  entity_id: WC-AC-0019:WC-SEC-0020
+  field: fx_rate
+  value: '1.25'
+  unit: fx_rate
+  household_id: WC-HH-0010
+  valuation_date: '2026-09-30'
+  known_as_of: '2026-10-31T16:00:00Z'
+required_predicates: []
+required_caveats: []
+result_checks: []
+required_mentions: []
+forbidden_mentions: []
+expected_refusal: null
+manual_checks:
+- Positions:10×EUR20×1.10=220;20×CAD15×0.75=225;30×GBP10×1.25=375. Cash100USD+100EUR×1.10+100CAD×0.75+100GBP×1.25=410.
+  Total1230.
+setup: []
+limitations: []
+required_source_disclosure: false

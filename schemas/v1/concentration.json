@@ -1,0 +1,697 @@
+{
+  "$defs": {
+    "BreachMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "item_count": {
+          "minimum": 0,
+          "title": "Item Count",
+          "type": "integer"
+        },
+        "next_cursor": {
+          "default": null,
+          "title": "Next Cursor",
+          "type": "null"
+        },
+        "ordering": {
+          "const": "concentration_pct_desc,household_id_asc,issuer_id_asc",
+          "default": "concentration_pct_desc,household_id_asc,issuer_id_asc",
+          "title": "Ordering",
+          "type": "string"
+        },
+        "rank_scope": {
+          "const": "book_concentration_breaches",
+          "default": "book_concentration_breaches",
+          "title": "Rank Scope",
+          "type": "string"
+        },
+        "total_item_count": {
+          "minimum": 0,
+          "title": "Total Item Count",
+          "type": "integer"
+        },
+        "truncated": {
+          "title": "Truncated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "item_count",
+        "total_item_count",
+        "truncated",
+        "next_cursor",
+        "ordering",
+        "rank_scope"
+      ],
+      "title": "BreachMetadata",
+      "type": "object"
+    },
+    "CompleteConcentration": {
+      "additionalProperties": false,
+      "properties": {
+        "applied_threshold_pct": {
+          "pattern": "^(?:(?:[1-9]|[1-4][0-9])\\.[0-9]{2}|50\\.00)$",
+          "title": "Applied Threshold Pct",
+          "type": "string"
+        },
+        "breach_metadata": {
+          "$ref": "#/$defs/BreachMetadata"
+        },
+        "breaches": {
+          "items": {
+            "$ref": "#/$defs/ConcentrationBreach"
+          },
+          "maxItems": 20,
+          "title": "Breaches",
+          "type": "array"
+        },
+        "breaching_household_count": {
+          "minimum": 0,
+          "title": "Breaching Household Count",
+          "type": "integer"
+        },
+        "comparator": {
+          "const": ">=",
+          "default": ">=",
+          "title": "Comparator",
+          "type": "string"
+        },
+        "determinate_household_count": {
+          "minimum": 0,
+          "title": "Determinate Household Count",
+          "type": "integer"
+        },
+        "evaluated_household_count": {
+          "minimum": 0,
+          "title": "Evaluated Household Count",
+          "type": "integer"
+        },
+        "indeterminate": {
+          "items": {
+            "$ref": "#/$defs/IndeterminateHousehold"
+          },
+          "maxItems": 0,
+          "title": "Indeterminate",
+          "type": "array"
+        },
+        "indeterminate_household_count": {
+          "default": 0,
+          "maximum": 0,
+          "minimum": 0,
+          "title": "Indeterminate Household Count",
+          "type": "integer"
+        },
+        "indeterminate_metadata": {
+          "$ref": "#/$defs/IndeterminateMetadata"
+        }
+      },
+      "required": [
+        "applied_threshold_pct",
+        "comparator",
+        "evaluated_household_count",
+        "determinate_household_count",
+        "indeterminate_household_count",
+        "breaching_household_count",
+        "breaches",
+        "indeterminate",
+        "breach_metadata",
+        "indeterminate_metadata"
+      ],
+      "title": "CompleteConcentration",
+      "type": "object"
+    },
+    "ConcentrationBreach": {
+      "additionalProperties": false,
+      "properties": {
+        "assets_usd": {
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "title": "Assets Usd",
+          "type": "string"
+        },
+        "book_rank": {
+          "minimum": 1,
+          "title": "Book Rank",
+          "type": "integer"
+        },
+        "concentration_pct": {
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "title": "Concentration Pct",
+          "type": "string"
+        },
+        "exposure_usd": {
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "title": "Exposure Usd",
+          "type": "string"
+        },
+        "household_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+          "title": "Household Id",
+          "type": "string"
+        },
+        "issuer_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+          "title": "Issuer Id",
+          "type": "string"
+        },
+        "issuer_rank": {
+          "minimum": 1,
+          "title": "Issuer Rank",
+          "type": "integer"
+        },
+        "label": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "meets_threshold": {
+          "const": true,
+          "default": true,
+          "title": "Meets Threshold",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "household_id",
+        "issuer_id",
+        "label",
+        "exposure_usd",
+        "assets_usd",
+        "concentration_pct",
+        "book_rank",
+        "issuer_rank",
+        "meets_threshold"
+      ],
+      "title": "ConcentrationBreach",
+      "type": "object"
+    },
+    "Error": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "UNAUTHENTICATED",
+            "NOT_AUTHORIZED",
+            "NOT_FOUND",
+            "INVALID_ARGUMENT",
+            "AS_OF_OUT_OF_RANGE",
+            "UNSUPPORTED_CURRENCY",
+            "RESULT_TOO_LARGE",
+            "POLICY_UNAVAILABLE",
+            "INTERNAL"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Details",
+          "type": "object"
+        },
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "retryable": {
+          "title": "Retryable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "retryable",
+        "details"
+      ],
+      "title": "Error",
+      "type": "object"
+    },
+    "IncompleteConcentration": {
+      "additionalProperties": false,
+      "properties": {
+        "applied_threshold_pct": {
+          "pattern": "^(?:(?:[1-9]|[1-4][0-9])\\.[0-9]{2}|50\\.00)$",
+          "title": "Applied Threshold Pct",
+          "type": "string"
+        },
+        "breach_metadata": {
+          "$ref": "#/$defs/BreachMetadata"
+        },
+        "breaches": {
+          "items": {
+            "$ref": "#/$defs/ConcentrationBreach"
+          },
+          "maxItems": 20,
+          "title": "Breaches",
+          "type": "array"
+        },
+        "breaching_household_count": {
+          "minimum": 0,
+          "title": "Breaching Household Count",
+          "type": "integer"
+        },
+        "comparator": {
+          "const": ">=",
+          "default": ">=",
+          "title": "Comparator",
+          "type": "string"
+        },
+        "determinate_household_count": {
+          "minimum": 0,
+          "title": "Determinate Household Count",
+          "type": "integer"
+        },
+        "evaluated_household_count": {
+          "minimum": 0,
+          "title": "Evaluated Household Count",
+          "type": "integer"
+        },
+        "indeterminate": {
+          "items": {
+            "$ref": "#/$defs/IndeterminateHousehold"
+          },
+          "minItems": 1,
+          "title": "Indeterminate",
+          "type": "array"
+        },
+        "indeterminate_household_count": {
+          "minimum": 0,
+          "title": "Indeterminate Household Count",
+          "type": "integer"
+        },
+        "indeterminate_metadata": {
+          "$ref": "#/$defs/IndeterminateMetadata"
+        }
+      },
+      "required": [
+        "applied_threshold_pct",
+        "comparator",
+        "evaluated_household_count",
+        "determinate_household_count",
+        "indeterminate_household_count",
+        "breaching_household_count",
+        "breaches",
+        "indeterminate",
+        "breach_metadata",
+        "indeterminate_metadata"
+      ],
+      "title": "IncompleteConcentration",
+      "type": "object"
+    },
+    "IndeterminateHousehold": {
+      "additionalProperties": false,
+      "properties": {
+        "blocking_flags": {
+          "items": {
+            "$ref": "#/$defs/QualityFlag"
+          },
+          "title": "Blocking Flags",
+          "type": "array"
+        },
+        "fresh_subtotal_usd": {
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "title": "Fresh Subtotal Usd",
+          "type": "string"
+        },
+        "household_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+          "title": "Household Id",
+          "type": "string"
+        },
+        "missing_account_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Missing Account Ids",
+          "type": "array"
+        },
+        "reason": {
+          "enum": [
+            "INCOMPLETE_ASSETS",
+            "NON_POSITIVE_ASSETS"
+          ],
+          "title": "Reason",
+          "type": "string"
+        },
+        "stale_component_count": {
+          "minimum": 0,
+          "title": "Stale Component Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "household_id",
+        "reason",
+        "fresh_subtotal_usd",
+        "stale_component_count",
+        "missing_account_ids",
+        "blocking_flags"
+      ],
+      "title": "IndeterminateHousehold",
+      "type": "object"
+    },
+    "IndeterminateMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "item_count": {
+          "minimum": 0,
+          "title": "Item Count",
+          "type": "integer"
+        },
+        "next_cursor": {
+          "default": null,
+          "title": "Next Cursor",
+          "type": "null"
+        },
+        "ordering": {
+          "const": "household_id_asc",
+          "default": "household_id_asc",
+          "title": "Ordering",
+          "type": "string"
+        },
+        "total_item_count": {
+          "minimum": 0,
+          "title": "Total Item Count",
+          "type": "integer"
+        },
+        "truncated": {
+          "const": false,
+          "default": false,
+          "title": "Truncated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "item_count",
+        "total_item_count",
+        "truncated",
+        "next_cursor",
+        "ordering"
+      ],
+      "title": "IndeterminateMetadata",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "QualityFlag": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "AMBIGUOUS",
+            "AMBIGUOUS_ENTITY",
+            "PRICE_STALE",
+            "SOURCE_UNAVAILABLE",
+            "FX_UNAVAILABLE",
+            "HOUSEHOLD_MEMBERSHIP_CONFLICT",
+            "REPORTING_HOUSEHOLD_CONFLICT",
+            "OWNERSHIP_CONFLICT",
+            "OWNERSHIP_UNAVAILABLE",
+            "PENDING_SETTLEMENT",
+            "QUANTITY_BREAK",
+            "CASH_BREAK",
+            "RECONCILIATION_UNAVAILABLE",
+            "PRICE_SOURCE_MISMATCH",
+            "CLOSED_ACCOUNT_WITH_BALANCE",
+            "HELD_AWAY_EXCLUDED"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "detail": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Detail",
+          "type": "object"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "subject": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+          "title": "Subject",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "subject",
+        "detail"
+      ],
+      "title": "QualityFlag",
+      "type": "object"
+    }
+  },
+  "$id": "https://wealthcontext.example/schemas/v1/concentration.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "data": {
+            "type": "object"
+          },
+          "entitlement_revision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "error": {
+            "type": "null"
+          },
+          "policy_revision": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "type": "string"
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "status": {
+            "const": "ERROR"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "null"
+          },
+          "error": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "COMPLETE"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/CompleteConcentration"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "INCOMPLETE"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/IncompleteConcentration"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "as_of": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "As Of"
+    },
+    "calculated_at": {
+      "format": "date-time",
+      "title": "Calculated At",
+      "type": "string"
+    },
+    "contract_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "data": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CompleteConcentration"
+        },
+        {
+          "$ref": "#/$defs/IncompleteConcentration"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Data"
+    },
+    "entitlement_revision": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Entitlement Revision"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Error"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "known_as_of": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Known As Of"
+    },
+    "metric_refs": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+        "type": "string"
+      },
+      "title": "Metric Refs",
+      "type": "array"
+    },
+    "policy_revision": {
+      "anyOf": [
+        {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Policy Revision"
+    },
+    "quality_flags": {
+      "items": {
+        "$ref": "#/$defs/QualityFlag"
+      },
+      "title": "Quality Flags",
+      "type": "array"
+    },
+    "result_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+      "title": "Result Id",
+      "type": "string"
+    },
+    "source_refs": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+        "type": "string"
+      },
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "COMPLETE",
+        "INCOMPLETE",
+        "ERROR"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "trace_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "valuation_date": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Valuation Date"
+    }
+  },
+  "required": [
+    "contract_version",
+    "trace_id",
+    "result_id",
+    "status",
+    "as_of",
+    "valuation_date",
+    "known_as_of",
+    "calculated_at",
+    "entitlement_revision",
+    "policy_revision",
+    "data",
+    "quality_flags",
+    "source_refs",
+    "metric_refs",
+    "error"
+  ],
+  "title": "ConcentrationEnvelope",
+  "type": "object"
+}

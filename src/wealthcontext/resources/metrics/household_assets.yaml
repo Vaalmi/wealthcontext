@@ -1,0 +1,10 @@
+id: HOUSEHOLD_ASSETS@1
+version: 1
+label: Household assets in included accounts
+formula: Sum of unrounded MV_POSITION@1 and CASH_USD@1 across included accounts
+inputs: [CRM reporting household, PAS complete snapshot, custody prices, FX]
+inclusion_rules: Managed accounts reported in this household; include closed balances; exclude held-away
+cutoffs: Valid date and received knowledge cutoff apply to facts and relationships
+rounding: Decimal precision 28, HALF_EVEN intermediates; sum unrounded components then HALF_UP to 0.01 USD
+accumulation: Sort positions by component ID and cash by component ID; sum positions and cash separately from Decimal zero, then add the two subtotals at precision 28 HALF_EVEN. Round only the final display.
+limitations: Not net worth or regulatory AUM; missing authoritative components produce no total

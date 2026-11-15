@@ -1,0 +1,11 @@
+id: MV_POSITION@1
+version: 1
+label: Position market value
+formula: PAS trade-date quantity times custody close times FX to USD
+inputs: [PAS quantity, custody close, listing currency, FX rate]
+inclusion_rules: Included managed-account positions, including closed accounts with balances
+cutoffs: Valid date and received knowledge cutoff apply to every input
+rounding: Decimal precision 28, HALF_EVEN intermediates; unrounded values enter sums; display HALF_UP to 0.01 USD
+freshness: Latest eligible custody close; US listings zero business days old, non-US listings at most one business day
+fx: USD identity one; other currencies require valuation-date fix with received timestamp at or before known_as_of
+limitations: Foreign market holidays are not modelled; stale or missing authoritative inputs withhold the household total

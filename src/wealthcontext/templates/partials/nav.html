@@ -1,0 +1,11 @@
+{% from "partials/macros.html" import icon %}
+{# The menu lists only the pages the permission matrix names for this role. A tab page
+   marks its section's entry as current too. #}
+{% set icons = {'/workbench': 'ask', '/workbench/book': 'home', '/workbench/household': 'book',
+                '/workbench/metrics': 'code', '/workbench/contracts': 'layers'} %}
+<nav class="side" aria-label="Sections">
+{% for group, items in menu_groups %}<div class="group">{{ group }}</div>
+<ul>{% for item in items %}<li><a href="{{ item.path }}"{% if item.path == active %} class="on" aria-current="page"{% elif item.path == section %} class="on" aria-current="true"{% endif %}>{{ icon(icons.get(item.path, 'layers')) }}{{ item.label }}</a></li>{% endfor %}</ul>
+{% endfor %}
+<p class="who"><b>{{ context.persona }}</b> · {{ role_labels[role] }}<br>Answers: {{ 'recorded replay' if context.mode == 'replay' else 'live harness' }}</p>
+</nav>

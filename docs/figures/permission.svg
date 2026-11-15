@@ -1,0 +1,56 @@
+<svg class="dg" viewBox="-14 -14 1028 604" width="1028" height="604" role="img" aria-label="Entitlement graph and the S04 reassignment: ADV-03 loses HH-0012 when the Oct 1 CRM run commits revision 42; later requests, old handles and in-chat reuse are denied, ADV-05 is allowed; any policy failure denies." xmlns="http://www.w3.org/2000/svg"><style>svg{--bg:#F2F4F3;--panel:#FBFCFB;--surface:#FFFFFF;--surface-2:#E9ECEB;--zone:#F4F6F5;--fg:#18202B;--fg-muted:#566070;--line:#CDD3D6;--line-strong:#7B8592;--edge:#46505E;--accent:#2756A6;--accent-soft:#E2EAF7;--ok:#1F7A4D;--ok-soft:#DFF1E7;--warn:#9C5B0E;--warn-soft:#FAEBD5;--deny:#B02A22;--deny-soft:#F8E1DF;--display:Georgia, "Times New Roman", serif;--body:"IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;--mono:ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;}
+@media (prefers-color-scheme: dark){svg{--bg:#11161C;--panel:#161C23;--surface:#1D242D;--surface-2:#252D38;--zone:#192028;--fg:#E5E9EE;--fg-muted:#9AA4B1;--line:#323B47;--line-strong:#6A7584;--edge:#A9B2BF;--accent:#8EB2F2;--accent-soft:#1D2C47;--ok:#6FCB9A;--ok-soft:#163325;--warn:#E8B062;--warn-soft:#382813;--deny:#F28B83;--deny-soft:#3B1C1A;}}
+.panel{fill:var(--panel);stroke:var(--line)}
+.dg text{font-family:var(--body)}
+.dg .tt{font-size:13px;font-weight:600;fill:var(--fg)}
+.dg .ts{font-size:11.5px;fill:var(--fg-muted)}
+.dg .lbl{font-size:11px;fill:var(--fg-muted)}
+.dg .mono{font-family:var(--mono)}
+.dg .tt.mono{font-size:12.5px}
+.dg .strong{fill:var(--fg);font-weight:600}
+.dg .big{font-family:var(--display);font-size:22px;font-weight:600;fill:var(--fg)}
+.dg .axt{fill:var(--fg);font-weight:500}
+.dg .zl{font-size:10.5px;letter-spacing:.08em;font-weight:600;fill:var(--fg-muted)}
+.dg .chipt{font-size:11.5px;font-weight:600}
+.dg .accentt{fill:var(--accent)} .dg .okt{fill:var(--ok)} .dg .warnt{fill:var(--warn)} .dg .denyt{fill:var(--deny)}
+.dg .lbg{fill:var(--panel)}
+.dg .zone{fill:var(--zone);stroke:var(--line);stroke-dasharray:5 4}
+.dg .box{fill:var(--surface);stroke:var(--line-strong);stroke-width:1.1}
+.dg .box.q{stroke-width:1.6}
+.dg .box.accent{fill:var(--accent-soft);stroke:var(--accent)}
+.dg .box.ok{fill:var(--ok-soft);stroke:var(--ok)}
+.dg .box.warn{fill:var(--warn-soft);stroke:var(--warn)}
+.dg .box.deny{fill:var(--deny-soft);stroke:var(--deny)}
+.dg .box.muted{fill:var(--surface-2);stroke:var(--line)}
+.dg .box.ghost{fill:none;stroke:var(--line-strong);stroke-dasharray:6 4}
+.dg .edge{fill:none;stroke:var(--edge);stroke-width:1.4}
+.dg .edge.accent{stroke:var(--accent)} .dg .edge.ok{stroke:var(--ok)} .dg .edge.deny{stroke:var(--deny)} .dg .edge.warn{stroke:var(--warn)}
+.dg .edge.dash{stroke-dasharray:5 4}
+.dg .edge.divider{stroke:var(--accent);stroke-dasharray:2 4;stroke-width:1.6}
+.dg .edge.guide{stroke:var(--fg-muted);stroke-dasharray:4 4;stroke-width:1.1}
+.dg .edge.guide.accent{stroke:var(--accent)}
+.dg .edge.life{stroke:var(--line-strong);stroke-dasharray:3 5;stroke-width:1}
+.dg .edge.axis{stroke:var(--fg-muted);stroke-width:1}
+.dg .head{fill:var(--edge)} .dg .head.accent{fill:var(--accent)} .dg .head.ok{fill:var(--ok)} .dg .head.deny{fill:var(--deny)} .dg .head.warn{fill:var(--warn)}
+.dg .reg0{fill:var(--surface-2)} .dg .reg1{fill:var(--surface)} .dg .reg2{fill:var(--accent-soft)}
+.dg .plotframe{fill:none;stroke:var(--line-strong)}
+.dg .dot{fill:var(--accent);stroke:var(--panel);stroke-width:2}
+.dg .bar{fill:var(--line-strong)} .dg .bar.accent{fill:var(--accent)}
+.dg .bar.pending{fill:none;stroke:var(--accent);stroke-width:1.4;stroke-dasharray:3 3}
+.dg .bar.ghost{fill:none;stroke:var(--line-strong);stroke-dasharray:5 4}
+.dg .tt14{font-size:14px;font-weight:600;fill:var(--fg)}
+.dg .bt{font-size:13.5px;fill:var(--fg)}
+.dg .bq{font-size:15.5px;font-weight:500;fill:var(--fg)}
+.dg .hl{fill:var(--accent);font-weight:700}
+.dg .person{fill:var(--line-strong)}
+.dg .bubble{fill:var(--surface);stroke:var(--line-strong);stroke-width:1.1}
+.dg .bubble.soft{fill:var(--surface-2);stroke:none}
+.dg .bubble.deny{fill:var(--deny-soft);stroke:var(--deny)}
+.dg .bubble.accent{fill:var(--accent-soft);stroke:var(--accent)}
+.dg .badge{fill:var(--deny)}
+.dg .badget{font-size:11px;font-weight:700;fill:var(--panel)}
+.dg .card{fill:var(--surface);stroke:var(--line)}
+.dg .dotc.warn{fill:var(--warn)} .dg .dotc.deny{fill:var(--deny)}
+.dg .step{fill:var(--surface);stroke:var(--line-strong);stroke-width:2}
+.dg .step.accent{fill:var(--accent-soft);stroke:var(--accent)} .dg .step.ok{fill:var(--ok-soft);stroke:var(--ok)}
+.dg .stepn{font-family:var(--display);font-size:19px;font-weight:600;fill:var(--fg)}</style><rect class="panel" x="-13.5" y="-13.5" width="1027" height="603" rx="10"/><defs><marker id="auth-base" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="head base"/></marker><marker id="auth-deny" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="head deny"/></marker><marker id="auth-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="head ok"/></marker></defs><rect class="zone" x="20" y="20" width="450" height="300" rx="12"/><text class="zl" x="34" y="40">ENTITLEMENT FACTS (STORED IN SQLITE)</text><rect class="zone" x="490" y="20" width="490" height="300" rx="12"/><text class="zl" x="504" y="40">S04: HOUSEHOLD REASSIGNED ON OCT 1</text><path class="edge " d="M 132.0 82.0 L 208.0 82.0" marker-end="url(#auth-base)"/><path class="edge " d="M 300.0 82.0 L 364.0 82.0" marker-end="url(#auth-base)"/><path class="edge deny dash" d="M 84.0 104.0 L 84.0 206.0 L 364.0 206.0" marker-end="url(#auth-deny)"/><path class="edge ok" d="M 132.0 278.0 L 320.0 278.0 L 320.0 222.0 L 364.0 222.0" marker-end="url(#auth-ok)"/><path class="edge axis" d="M 510.0 64.0 L 960.0 64.0"/><path class="edge axis" d="M 600.0 60.0 L 600.0 68.0"/><path class="edge axis" d="M 720.0 60.0 L 720.0 68.0"/><path class="edge axis" d="M 850.0 60.0 L 850.0 68.0"/><path class="edge guide accent" d="M 720.0 64.0 L 720.0 310.0"/><rect class="box " x="36" y="60" width="96" height="44" rx="7"/><text class="tt t" x="84.0" y="78.0" text-anchor="middle">ADV-03</text><text class="ts" x="84.0" y="94.0" text-anchor="middle">advisor</text><rect class="box " x="208" y="60" width="92" height="44" rx="7"/><text class="tt t" x="254.0" y="78.0" text-anchor="middle">Team A</text><text class="ts" x="254.0" y="94.0" text-anchor="middle">team</text><rect class="box " x="364" y="60" width="92" height="44" rx="7"/><text class="tt t" x="410.0" y="78.0" text-anchor="middle">HH-0007</text><text class="ts" x="410.0" y="94.0" text-anchor="middle">household</text><rect class="box " x="364" y="190" width="92" height="44" rx="7"/><text class="tt t" x="410.0" y="208.0" text-anchor="middle">HH-0012</text><text class="ts" x="410.0" y="224.0" text-anchor="middle">household</text><rect class="box " x="36" y="256" width="96" height="44" rx="7"/><text class="tt t" x="84.0" y="274.0" text-anchor="middle">ADV-05</text><text class="ts" x="84.0" y="290.0" text-anchor="middle">advisor</text><rect class="box ok" x="540" y="120" width="150" height="26" rx="13"/><text class="ts chipt okt" x="615.0" y="137" text-anchor="middle">ALLOW · rev 41</text><rect class="box deny" x="735" y="120" width="200" height="26" rx="13"/><text class="ts chipt denyt" x="835.0" y="137" text-anchor="middle">NOT_AUTHORIZED · rev 42</text><rect class="box deny" x="735" y="172" width="200" height="26" rx="13"/><text class="ts chipt denyt" x="835.0" y="189" text-anchor="middle">NOT_AUTHORIZED</text><rect class="box warn" x="735" y="224" width="230" height="26" rx="13"/><text class="ts chipt warnt" x="850.0" y="241" text-anchor="middle">results + prior answers tombstoned</text><rect class="box ok" x="735" y="276" width="200" height="26" rx="13"/><text class="ts chipt okt" x="835.0" y="293" text-anchor="middle">ALLOW · history included</text><rect class="box deny" x="20" y="346" width="960" height="64" rx="7"/><text class="tt denyt" x="500.0" y="374.0" text-anchor="middle">Fail closed → POLICY_UNAVAILABLE</text><text class="ts" x="500.0" y="390.0" text-anchor="middle">OPA timeout or non-200 · no result · wrong bundle revision · unknown projection · IDs outside the candidates</text><rect class="box " x="20" y="430" width="470" height="58" rx="7"/><text class="tt t" x="255.0" y="455.0" text-anchor="middle">Neutral wording for denials</text><text class="ts" x="255.0" y="471.0" text-anchor="middle">denied → NOT_AUTHORIZED, ID exists or not; NOT_FOUND only after allow</text><rect class="box " x="510" y="430" width="470" height="58" rx="7"/><text class="tt t" x="745.0" y="455.0" text-anchor="middle">Checked at request time, not at as_of</text><text class="ts" x="745.0" y="471.0" text-anchor="middle">as_of picks the data; entitlements are today&#x27;s</text><rect class="box muted" x="20" y="504" width="960" height="58" rx="7"/><text class="tt mutedt" x="500.0" y="529.0" text-anchor="middle">Other roles and projections</text><text class="ts" x="500.0" y="545.0" text-anchor="middle">Ops: data quality across households, names redacted (no_pii) · Compliance: lineage + decision log · Platform engineer: contracts + metrics only</text><g><rect class="lbg" x="137.6" y="74.0" width="64.9" height="16" rx="3"/><text class="lbl t" x="170.0" y="86.0" text-anchor="middle">member_of</text></g><g><rect class="lbg" x="308.7" y="74.0" width="46.6" height="16" rx="3"/><text class="lbl t" x="332.0" y="86.0" text-anchor="middle">covers</text></g><text class="ts" x="208.0" y="132.0" text-anchor="start">ADV-03 keeps HH-0007 through Team A</text><g><rect class="lbg" x="161.1" y="198.0" width="125.9" height="16" rx="3"/><text class="lbl denyt" x="224.0" y="210.0" text-anchor="middle">covers · ended 10/1</text></g><g><rect class="lbg" x="166.1" y="270.0" width="119.8" height="16" rx="3"/><text class="lbl okt" x="226.0" y="282.0" text-anchor="middle">covers · from 10/1</text></g><text class="ts" x="600.0" y="54.0" text-anchor="middle">Sep 30</text><text class="ts" x="720.0" y="54.0" text-anchor="middle">Oct 1</text><text class="ts" x="850.0" y="54.0" text-anchor="middle">Oct 2</text><g><rect class="lbg" x="614.4" y="76.0" width="211.3" height="16" rx="3"/><text class="lbl accentt" x="720.0" y="88.0" text-anchor="middle">CRM run commits: revision 41 → 42</text></g><g><rect class="lbg" x="505.0" y="104.0" width="150.3" height="16" rx="3"/><text class="lbl strong" x="510.0" y="116.0" text-anchor="start">ADV-03 asks for HH-0012</text></g><g><rect class="lbg" x="505.0" y="156.0" width="241.8" height="16" rx="3"/><text class="lbl strong" x="510.0" y="168.0" text-anchor="start">ADV-03 reuses an old provenance handle</text></g><g><rect class="lbg" x="505.0" y="208.0" width="217.4" height="16" rx="3"/><text class="lbl strong" x="510.0" y="220.0" text-anchor="start">ADV-03 follows up in the workbench</text></g><g><rect class="lbg" x="505.0" y="260.0" width="247.9" height="16" rx="3"/><text class="lbl strong" x="510.0" y="272.0" text-anchor="start">ADV-05 asks about HH-0012 at as_of 9/15</text></g></svg>

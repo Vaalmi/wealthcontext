@@ -1,0 +1,556 @@
+{
+  "$defs": {
+    "DecisionItem": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "title": "Action",
+          "type": "string"
+        },
+        "allowed": {
+          "title": "Allowed",
+          "type": "boolean"
+        },
+        "entitlement_revision": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Entitlement Revision"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "policy_revision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Policy Revision"
+        },
+        "principal_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Principal Id"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "recorded_at": {
+          "format": "date-time",
+          "title": "Recorded At",
+          "type": "string"
+        },
+        "resources": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Resources",
+          "type": "array"
+        },
+        "trace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+          "title": "Trace Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "principal_id",
+        "action",
+        "resources",
+        "allowed",
+        "reason",
+        "policy_revision",
+        "entitlement_revision",
+        "trace_id",
+        "recorded_at"
+      ],
+      "title": "DecisionItem",
+      "type": "object"
+    },
+    "Error": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "UNAUTHENTICATED",
+            "NOT_AUTHORIZED",
+            "NOT_FOUND",
+            "INVALID_ARGUMENT",
+            "AS_OF_OUT_OF_RANGE",
+            "UNSUPPORTED_CURRENCY",
+            "RESULT_TOO_LARGE",
+            "POLICY_UNAVAILABLE",
+            "INTERNAL"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Details",
+          "type": "object"
+        },
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "retryable": {
+          "title": "Retryable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "retryable",
+        "details"
+      ],
+      "title": "Error",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "QualityFlag": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "AMBIGUOUS",
+            "AMBIGUOUS_ENTITY",
+            "PRICE_STALE",
+            "SOURCE_UNAVAILABLE",
+            "FX_UNAVAILABLE",
+            "HOUSEHOLD_MEMBERSHIP_CONFLICT",
+            "REPORTING_HOUSEHOLD_CONFLICT",
+            "OWNERSHIP_CONFLICT",
+            "OWNERSHIP_UNAVAILABLE",
+            "PENDING_SETTLEMENT",
+            "QUANTITY_BREAK",
+            "CASH_BREAK",
+            "RECONCILIATION_UNAVAILABLE",
+            "PRICE_SOURCE_MISMATCH",
+            "CLOSED_ACCOUNT_WITH_BALANCE",
+            "HELD_AWAY_EXCLUDED"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "detail": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Detail",
+          "type": "object"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "subject": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+          "title": "Subject",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "subject",
+        "detail"
+      ],
+      "title": "QualityFlag",
+      "type": "object"
+    },
+    "SurfaceList_DecisionItem_": {
+      "additionalProperties": false,
+      "properties": {
+        "item_count": {
+          "maximum": 20,
+          "minimum": 0,
+          "title": "Item Count",
+          "type": "integer"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/DecisionItem"
+          },
+          "maxItems": 20,
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "default": null,
+          "title": "Next Cursor",
+          "type": "null"
+        },
+        "ordering": {
+          "title": "Ordering",
+          "type": "string"
+        },
+        "total_item_count": {
+          "minimum": 0,
+          "title": "Total Item Count",
+          "type": "integer"
+        },
+        "truncated": {
+          "title": "Truncated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "items",
+        "item_count",
+        "total_item_count",
+        "ordering",
+        "truncated",
+        "next_cursor"
+      ],
+      "title": "SurfaceList[DecisionItem]",
+      "type": "object"
+    },
+    "SurfaceList_TraceResultItem_": {
+      "additionalProperties": false,
+      "properties": {
+        "item_count": {
+          "maximum": 20,
+          "minimum": 0,
+          "title": "Item Count",
+          "type": "integer"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/TraceResultItem"
+          },
+          "maxItems": 20,
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "default": null,
+          "title": "Next Cursor",
+          "type": "null"
+        },
+        "ordering": {
+          "title": "Ordering",
+          "type": "string"
+        },
+        "total_item_count": {
+          "minimum": 0,
+          "title": "Total Item Count",
+          "type": "integer"
+        },
+        "truncated": {
+          "title": "Truncated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "items",
+        "item_count",
+        "total_item_count",
+        "ordering",
+        "truncated",
+        "next_cursor"
+      ],
+      "title": "SurfaceList[TraceResultItem]",
+      "type": "object"
+    },
+    "TraceData": {
+      "additionalProperties": false,
+      "properties": {
+        "decisions": {
+          "$ref": "#/$defs/SurfaceList_DecisionItem_"
+        },
+        "principal_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Principal Id"
+        },
+        "results": {
+          "$ref": "#/$defs/SurfaceList_TraceResultItem_"
+        },
+        "trace_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+          "title": "Trace Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "trace_id",
+        "principal_id",
+        "results",
+        "decisions"
+      ],
+      "title": "TraceData",
+      "type": "object"
+    },
+    "TraceResultItem": {
+      "additionalProperties": false,
+      "properties": {
+        "payload_hash": {
+          "title": "Payload Hash",
+          "type": "string"
+        },
+        "recorded_at": {
+          "format": "date-time",
+          "title": "Recorded At",
+          "type": "string"
+        },
+        "result_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+          "title": "Result Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "COMPLETE",
+            "INCOMPLETE",
+            "ERROR"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "result_id",
+        "status",
+        "payload_hash",
+        "recorded_at"
+      ],
+      "title": "TraceResultItem",
+      "type": "object"
+    }
+  },
+  "$id": "https://wealthcontext.example/schemas/v1/trace.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "data": {
+            "type": "object"
+          },
+          "entitlement_revision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "error": {
+            "type": "null"
+          },
+          "policy_revision": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "type": "string"
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "status": {
+            "const": "ERROR"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "null"
+          },
+          "error": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "as_of": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "As Of"
+    },
+    "calculated_at": {
+      "format": "date-time",
+      "title": "Calculated At",
+      "type": "string"
+    },
+    "contract_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "data": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TraceData"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "entitlement_revision": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Entitlement Revision"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Error"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "known_as_of": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Known As Of"
+    },
+    "metric_refs": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+        "type": "string"
+      },
+      "title": "Metric Refs",
+      "type": "array"
+    },
+    "policy_revision": {
+      "anyOf": [
+        {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Policy Revision"
+    },
+    "quality_flags": {
+      "items": {
+        "$ref": "#/$defs/QualityFlag"
+      },
+      "title": "Quality Flags",
+      "type": "array"
+    },
+    "result_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+      "title": "Result Id",
+      "type": "string"
+    },
+    "source_refs": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+        "type": "string"
+      },
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "COMPLETE",
+        "INCOMPLETE",
+        "ERROR"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "trace_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "valuation_date": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Valuation Date"
+    }
+  },
+  "required": [
+    "contract_version",
+    "trace_id",
+    "result_id",
+    "status",
+    "as_of",
+    "valuation_date",
+    "known_as_of",
+    "calculated_at",
+    "entitlement_revision",
+    "policy_revision",
+    "data",
+    "quality_flags",
+    "source_refs",
+    "metric_refs",
+    "error"
+  ],
+  "title": "Envelope[TraceData]",
+  "type": "object"
+}

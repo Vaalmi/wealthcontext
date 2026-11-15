@@ -1,0 +1,10 @@
+id: CONCENTRATION@1
+version: 1
+label: Operating-company issuer concentration
+formula: Issuer exposure divided by complete positive household assets; compare unrounded ratio against threshold_pct divided by 100 using >=
+inputs: [ISSUER_EXPOSURE@1, HOUSEHOLD_ASSETS@1, threshold_pct]
+inclusion_rules: Operating-company issuers only; cash and fund vehicles are excluded from numerators and included in the denominator
+cutoffs: Current entitlement scope; financial inputs use requested valuation and received knowledge cutoffs
+rounding: Decimal precision 28, HALF_EVEN ratio and threshold comparison before any display rounding. USD and percentage points display HALF_UP to 0.01.
+threshold: Percent string 1.00 through 50.00 inclusive, default 10.00, at most two decimal places
+limitations: Incomplete or nonpositive household assets are indeterminate with no percentage. Evaluate every entitled household and issuer before top-20 breach selection; retain every indeterminate household. No fund look-through.

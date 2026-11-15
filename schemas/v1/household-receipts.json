@@ -1,0 +1,431 @@
+{
+  "$defs": {
+    "Error": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "UNAUTHENTICATED",
+            "NOT_AUTHORIZED",
+            "NOT_FOUND",
+            "INVALID_ARGUMENT",
+            "AS_OF_OUT_OF_RANGE",
+            "UNSUPPORTED_CURRENCY",
+            "RESULT_TOO_LARGE",
+            "POLICY_UNAVAILABLE",
+            "INTERNAL"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Details",
+          "type": "object"
+        },
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "retryable": {
+          "title": "Retryable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "retryable",
+        "details"
+      ],
+      "title": "Error",
+      "type": "object"
+    },
+    "HouseholdReceiptsData": {
+      "additionalProperties": false,
+      "properties": {
+        "cited_record_count": {
+          "minimum": 0,
+          "title": "Cited Record Count",
+          "type": "integer"
+        },
+        "household_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+          "title": "Household Id",
+          "type": "string"
+        },
+        "item_count": {
+          "maximum": 20,
+          "minimum": 0,
+          "title": "Item Count",
+          "type": "integer"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ReceiptItem"
+          },
+          "maxItems": 20,
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "default": null,
+          "title": "Next Cursor",
+          "type": "null"
+        },
+        "ordering": {
+          "title": "Ordering",
+          "type": "string"
+        },
+        "records_without_run_count": {
+          "minimum": 0,
+          "title": "Records Without Run Count",
+          "type": "integer"
+        },
+        "total_item_count": {
+          "minimum": 0,
+          "title": "Total Item Count",
+          "type": "integer"
+        },
+        "truncated": {
+          "title": "Truncated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "items",
+        "item_count",
+        "total_item_count",
+        "ordering",
+        "truncated",
+        "next_cursor",
+        "household_id",
+        "cited_record_count",
+        "records_without_run_count"
+      ],
+      "title": "HouseholdReceiptsData",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "QualityFlag": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "AMBIGUOUS",
+            "AMBIGUOUS_ENTITY",
+            "PRICE_STALE",
+            "SOURCE_UNAVAILABLE",
+            "FX_UNAVAILABLE",
+            "HOUSEHOLD_MEMBERSHIP_CONFLICT",
+            "REPORTING_HOUSEHOLD_CONFLICT",
+            "OWNERSHIP_CONFLICT",
+            "OWNERSHIP_UNAVAILABLE",
+            "PENDING_SETTLEMENT",
+            "QUANTITY_BREAK",
+            "CASH_BREAK",
+            "RECONCILIATION_UNAVAILABLE",
+            "PRICE_SOURCE_MISMATCH",
+            "CLOSED_ACCOUNT_WITH_BALANCE",
+            "HELD_AWAY_EXCLUDED"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "detail": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Detail",
+          "type": "object"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "subject": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+          "title": "Subject",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "subject",
+        "detail"
+      ],
+      "title": "QualityFlag",
+      "type": "object"
+    },
+    "ReceiptItem": {
+      "additionalProperties": false,
+      "description": "One feed run that first delivered records the household snapshot cites.",
+      "properties": {
+        "business_date": {
+          "format": "date",
+          "title": "Business Date",
+          "type": "string"
+        },
+        "feed": {
+          "enum": [
+            "crm",
+            "custody_accounts",
+            "securities",
+            "pas_snapshots",
+            "custody_snapshots",
+            "prices",
+            "transactions",
+            "lots",
+            "fx"
+          ],
+          "title": "Feed",
+          "type": "string"
+        },
+        "record_count": {
+          "minimum": 1,
+          "title": "Record Count",
+          "type": "integer"
+        },
+        "recorded_at": {
+          "format": "date-time",
+          "title": "Recorded At",
+          "type": "string"
+        },
+        "run_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+          "title": "Run Id",
+          "type": "string"
+        },
+        "source_system": {
+          "enum": [
+            "CRM",
+            "PAS-A",
+            "PAS-B",
+            "CUSTODY-A",
+            "CUSTODY-B",
+            "FX",
+            "SECMASTER"
+          ],
+          "title": "Source System",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id",
+        "source_system",
+        "feed",
+        "business_date",
+        "recorded_at",
+        "record_count"
+      ],
+      "title": "ReceiptItem",
+      "type": "object"
+    }
+  },
+  "$id": "https://wealthcontext.example/schemas/v1/household-receipts.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "data": {
+            "type": "object"
+          },
+          "entitlement_revision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "error": {
+            "type": "null"
+          },
+          "policy_revision": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "type": "string"
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "status": {
+            "const": "ERROR"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "null"
+          },
+          "error": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "as_of": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "As Of"
+    },
+    "calculated_at": {
+      "format": "date-time",
+      "title": "Calculated At",
+      "type": "string"
+    },
+    "contract_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "data": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HouseholdReceiptsData"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "entitlement_revision": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Entitlement Revision"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Error"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "known_as_of": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Known As Of"
+    },
+    "metric_refs": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+        "type": "string"
+      },
+      "title": "Metric Refs",
+      "type": "array"
+    },
+    "policy_revision": {
+      "anyOf": [
+        {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Policy Revision"
+    },
+    "quality_flags": {
+      "items": {
+        "$ref": "#/$defs/QualityFlag"
+      },
+      "title": "Quality Flags",
+      "type": "array"
+    },
+    "result_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+      "title": "Result Id",
+      "type": "string"
+    },
+    "source_refs": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+        "type": "string"
+      },
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "COMPLETE",
+        "INCOMPLETE",
+        "ERROR"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "trace_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "valuation_date": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Valuation Date"
+    }
+  },
+  "required": [
+    "contract_version",
+    "trace_id",
+    "result_id",
+    "status",
+    "as_of",
+    "valuation_date",
+    "known_as_of",
+    "calculated_at",
+    "entitlement_revision",
+    "policy_revision",
+    "data",
+    "quality_flags",
+    "source_refs",
+    "metric_refs",
+    "error"
+  ],
+  "title": "Envelope[HouseholdReceiptsData]",
+  "type": "object"
+}

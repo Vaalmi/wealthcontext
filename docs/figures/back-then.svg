@@ -1,0 +1,56 @@
+<svg class="dg" viewBox="-14 -14 1028 364" width="1028" height="364" role="img" aria-label="Timeline: a purchase of 200 shares happens Sep 29; the quarter ends Sep 30; on Oct 3 the advisor sees 1,000 shares; on Oct 6 the purchase reaches the books; today the quarter-end shows 1,200 shares. WealthContext can answer both what was known on Oct 3 and what is true for quarter-end today." xmlns="http://www.w3.org/2000/svg"><style>svg{--bg:#F2F4F3;--panel:#FBFCFB;--surface:#FFFFFF;--surface-2:#E9ECEB;--zone:#F4F6F5;--fg:#18202B;--fg-muted:#566070;--line:#CDD3D6;--line-strong:#7B8592;--edge:#46505E;--accent:#2756A6;--accent-soft:#E2EAF7;--ok:#1F7A4D;--ok-soft:#DFF1E7;--warn:#9C5B0E;--warn-soft:#FAEBD5;--deny:#B02A22;--deny-soft:#F8E1DF;--display:Georgia, "Times New Roman", serif;--body:"IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;--mono:ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;}
+@media (prefers-color-scheme: dark){svg{--bg:#11161C;--panel:#161C23;--surface:#1D242D;--surface-2:#252D38;--zone:#192028;--fg:#E5E9EE;--fg-muted:#9AA4B1;--line:#323B47;--line-strong:#6A7584;--edge:#A9B2BF;--accent:#8EB2F2;--accent-soft:#1D2C47;--ok:#6FCB9A;--ok-soft:#163325;--warn:#E8B062;--warn-soft:#382813;--deny:#F28B83;--deny-soft:#3B1C1A;}}
+.panel{fill:var(--panel);stroke:var(--line)}
+.dg text{font-family:var(--body)}
+.dg .tt{font-size:13px;font-weight:600;fill:var(--fg)}
+.dg .ts{font-size:11.5px;fill:var(--fg-muted)}
+.dg .lbl{font-size:11px;fill:var(--fg-muted)}
+.dg .mono{font-family:var(--mono)}
+.dg .tt.mono{font-size:12.5px}
+.dg .strong{fill:var(--fg);font-weight:600}
+.dg .big{font-family:var(--display);font-size:22px;font-weight:600;fill:var(--fg)}
+.dg .axt{fill:var(--fg);font-weight:500}
+.dg .zl{font-size:10.5px;letter-spacing:.08em;font-weight:600;fill:var(--fg-muted)}
+.dg .chipt{font-size:11.5px;font-weight:600}
+.dg .accentt{fill:var(--accent)} .dg .okt{fill:var(--ok)} .dg .warnt{fill:var(--warn)} .dg .denyt{fill:var(--deny)}
+.dg .lbg{fill:var(--panel)}
+.dg .zone{fill:var(--zone);stroke:var(--line);stroke-dasharray:5 4}
+.dg .box{fill:var(--surface);stroke:var(--line-strong);stroke-width:1.1}
+.dg .box.q{stroke-width:1.6}
+.dg .box.accent{fill:var(--accent-soft);stroke:var(--accent)}
+.dg .box.ok{fill:var(--ok-soft);stroke:var(--ok)}
+.dg .box.warn{fill:var(--warn-soft);stroke:var(--warn)}
+.dg .box.deny{fill:var(--deny-soft);stroke:var(--deny)}
+.dg .box.muted{fill:var(--surface-2);stroke:var(--line)}
+.dg .box.ghost{fill:none;stroke:var(--line-strong);stroke-dasharray:6 4}
+.dg .edge{fill:none;stroke:var(--edge);stroke-width:1.4}
+.dg .edge.accent{stroke:var(--accent)} .dg .edge.ok{stroke:var(--ok)} .dg .edge.deny{stroke:var(--deny)} .dg .edge.warn{stroke:var(--warn)}
+.dg .edge.dash{stroke-dasharray:5 4}
+.dg .edge.divider{stroke:var(--accent);stroke-dasharray:2 4;stroke-width:1.6}
+.dg .edge.guide{stroke:var(--fg-muted);stroke-dasharray:4 4;stroke-width:1.1}
+.dg .edge.guide.accent{stroke:var(--accent)}
+.dg .edge.life{stroke:var(--line-strong);stroke-dasharray:3 5;stroke-width:1}
+.dg .edge.axis{stroke:var(--fg-muted);stroke-width:1}
+.dg .head{fill:var(--edge)} .dg .head.accent{fill:var(--accent)} .dg .head.ok{fill:var(--ok)} .dg .head.deny{fill:var(--deny)} .dg .head.warn{fill:var(--warn)}
+.dg .reg0{fill:var(--surface-2)} .dg .reg1{fill:var(--surface)} .dg .reg2{fill:var(--accent-soft)}
+.dg .plotframe{fill:none;stroke:var(--line-strong)}
+.dg .dot{fill:var(--accent);stroke:var(--panel);stroke-width:2}
+.dg .bar{fill:var(--line-strong)} .dg .bar.accent{fill:var(--accent)}
+.dg .bar.pending{fill:none;stroke:var(--accent);stroke-width:1.4;stroke-dasharray:3 3}
+.dg .bar.ghost{fill:none;stroke:var(--line-strong);stroke-dasharray:5 4}
+.dg .tt14{font-size:14px;font-weight:600;fill:var(--fg)}
+.dg .bt{font-size:13.5px;fill:var(--fg)}
+.dg .bq{font-size:15.5px;font-weight:500;fill:var(--fg)}
+.dg .hl{fill:var(--accent);font-weight:700}
+.dg .person{fill:var(--line-strong)}
+.dg .bubble{fill:var(--surface);stroke:var(--line-strong);stroke-width:1.1}
+.dg .bubble.soft{fill:var(--surface-2);stroke:none}
+.dg .bubble.deny{fill:var(--deny-soft);stroke:var(--deny)}
+.dg .bubble.accent{fill:var(--accent-soft);stroke:var(--accent)}
+.dg .badge{fill:var(--deny)}
+.dg .badget{font-size:11px;font-weight:700;fill:var(--panel)}
+.dg .card{fill:var(--surface);stroke:var(--line)}
+.dg .dotc.warn{fill:var(--warn)} .dg .dotc.deny{fill:var(--deny)}
+.dg .step{fill:var(--surface);stroke:var(--line-strong);stroke-width:2}
+.dg .step.accent{fill:var(--accent-soft);stroke:var(--accent)} .dg .step.ok{fill:var(--ok-soft);stroke:var(--ok)}
+.dg .stepn{font-family:var(--display);font-size:19px;font-weight:600;fill:var(--fg)}</style><rect class="panel" x="-13.5" y="-13.5" width="1027" height="363" rx="10"/><defs></defs><path class="edge axis" d="M 40.0 150.0 L 960.0 150.0"/><path class="edge " d="M 130.0 112.0 L 130.0 150.0"/><path class="edge " d="M 440.0 112.0 L 440.0 150.0"/><path class="edge " d="M 850.0 112.0 L 850.0 150.0"/><path class="edge " d="M 280.0 150.0 L 280.0 188.0"/><path class="edge " d="M 640.0 150.0 L 640.0 188.0"/><rect class="box " x="40" y="40" width="180" height="72" rx="7"/><text class="tt t" x="130.0" y="72.0" text-anchor="middle">Sep 29</text><text class="ts" x="130.0" y="88.0" text-anchor="middle">200 more shares bought</text><rect class="box accent" x="350" y="40" width="180" height="72" rx="7"/><text class="tt accentt" x="440.0" y="64.5" text-anchor="middle">Oct 3</text><text class="ts" x="440.0" y="80.5" text-anchor="middle">advisor reviews quarter-end:</text><text class="ts" x="440.0" y="95.5" text-anchor="middle">1,000 shares</text><rect class="box ok" x="760" y="40" width="180" height="72" rx="7"/><text class="tt okt" x="850.0" y="64.5" text-anchor="middle">Today, Oct 31</text><text class="ts" x="850.0" y="80.5" text-anchor="middle">quarter-end now shows</text><text class="ts" x="850.0" y="95.5" text-anchor="middle">1,200 shares</text><rect class="box " x="190" y="188" width="180" height="72" rx="7"/><text class="tt t" x="280.0" y="220.0" text-anchor="middle">Sep 30</text><text class="ts" x="280.0" y="236.0" text-anchor="middle">the quarter ends</text><rect class="box warn" x="550" y="188" width="180" height="72" rx="7"/><text class="tt warnt" x="640.0" y="212.5" text-anchor="middle">Oct 6</text><text class="ts" x="640.0" y="228.5" text-anchor="middle">the late trade record</text><text class="ts" x="640.0" y="243.5" text-anchor="middle">reaches WealthContext</text><rect class="box accent" x="40" y="292" width="430" height="26" rx="13"/><text class="ts chipt accentt" x="255.0" y="309" text-anchor="middle">Quarter-end, as known on Oct 3  →  1,000 shares</text><rect class="box ok" x="530" y="292" width="430" height="26" rx="13"/><text class="ts chipt okt" x="745.0" y="309" text-anchor="middle">Quarter-end, as known today  →  1,200 shares</text><circle class="dot" cx="130" cy="150" r="5"/><circle class="dot" cx="280" cy="150" r="5"/><circle class="dot" cx="440" cy="150" r="5"/><circle class="dot" cx="640" cy="150" r="5"/><circle class="dot" cx="850" cy="150" r="5"/></svg>

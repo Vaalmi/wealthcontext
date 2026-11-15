@@ -1,0 +1,89 @@
+version: 1
+id: F04
+question: Which issuer has the largest exposure?
+scenario: clean
+category: financial
+principal:
+  id: ADV-01
+  role: advisor
+request_time: '2026-11-01T12:00:00Z'
+valuation_date: '2026-09-30'
+known_as_of: '2026-10-31T16:00:00Z'
+household_ids:
+- WC-HH-0001
+authoritative_sources:
+  membership_reporting: CRM
+  quantity_cash: PAS trade-date snapshots
+  price: Custody latest eligible EOD close
+  fx: Same-day USD conversion fix; USD identity 1
+received_records:
+- source_system: CRM
+  feed: crm
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - household-WC-HH-0001
+  observation: Household, membership and reporting assertions determine included managed accounts.
+- source_system: PAS-A
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - position-WC-AC-0001-WC-SEC-0001
+  - cash-WC-AC-0001-USD
+  observation: 'Account 0001: 100 shares and USD500; account 0002 is a verified zero-row managed account.'
+- source_system: PAS-B
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-B accounts.
+- source_system: CUSTODY-A
+  feed: prices
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - price-WC-SEC-0001
+  observation: Received close observations; secondary PAS quotes never replace custody pricing.
+missing_records: []
+requests:
+- alias: exposure
+  tool: get_portfolio_exposure
+  arguments:
+    as_of: '2026-09-30'
+    known_as_of: '2026-10-31T16:00:00Z'
+    household_id: WC-HH-0001
+    group_by: issuer
+  status: COMPLETE
+  metric_refs:
+  - MV_POSITION@1
+  - CASH_USD@1
+  - HOUSEHOLD_ASSETS@1
+  - ISSUER_EXPOSURE@1
+required_facts:
+- request: exposure
+  entity_type: issuer
+  entity_id: WC-ISS-0001
+  field: exposure_usd
+  value: '2500.00'
+  unit: USD
+  household_id: WC-HH-0001
+  valuation_date: '2026-09-30'
+  known_as_of: '2026-10-31T16:00:00Z'
+required_predicates:
+- request: exposure
+  entity_type: issuer
+  entity_id: WC-ISS-0001
+  kind: rank
+  field: rank
+  expect: 1
+required_caveats: []
+result_checks: []
+required_mentions: []
+forbidden_mentions: []
+expected_refusal: null
+manual_checks:
+- 100 × USD25 × USD identity 1 = USD2500; plus USD500 cash = USD3000.
+setup: []
+limitations: []
+required_source_disclosure: false

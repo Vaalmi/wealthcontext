@@ -1,0 +1,20 @@
+WealthContext
+Copyright 2026 Vaalmika Platforms Inc.
+
+The project is distributed under the Apache License, Version 2.0.
+
+Third-party libraries and container images retain their own licenses.
+
+Fonts
+
+The workbench ships three typefaces, each under the SIL Open Font License,
+Version 1.1. The licence texts are in src/wealthcontext/static/fonts/.
+
+- Inter: Copyright 2020 The Inter Project Authors
+  (https://github.com/rsms/inter). Licence: Inter-OFL.txt.
+- JetBrains Mono: Copyright 2020 The JetBrains Mono Project Authors
+  (https://github.com/JetBrains/JetBrainsMono). Licence: JetBrainsMono-OFL.txt.
+- Newsreader: Copyright 2020 The Newsreader Project Authors
+  (http://github.com/productiontype/Newsreader). Licence: Newsreader-OFL.txt.
+
+The WealthContext mark and wordmark are the project's own.

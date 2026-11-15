@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, state %}
+{# E1: definitions only. The registry is the governed metric catalog and the definition is
+   its own governed read; both are shown as returned. No household, figure, trace or span
+   is read or shown, and nothing is counted here: the catalog states its own count. #}
+{% set items = catalog.data['items'] if catalog.error is none else [] %}
+{% set data = definition.data if definition and definition.error is none else none %}
+{% set labels = {'formula': 'Formula', 'inputs': 'Inputs', 'inclusion_rules': 'Inclusion',
+                 'cutoffs': 'Cutoffs', 'rounding': 'Rounding', 'accumulation': 'Accumulation',
+                 'threshold': 'Threshold', 'freshness': 'Freshness', 'fx': 'FX',
+                 'limitations': 'Limitations'} %}
+{% block title %}{{ data.label if data else 'Metrics' }}{% endblock %}
+{% block main %}
+<p class="crumb">Contracts · Metrics</p>
+<div class="page-head"><div><h1>{{ data.label if data else 'Metrics' }}</h1>
+<p class="sub">{% if data %}<span class="mono">{{ data.id }}</span> · version {{ data.version }} · read now through the governed <span class="mono">get_metric_definition</span>{% else %}Versioned metric definitions, read through the governed <span class="mono">get_metric_definition</span>{% endif %}. Definitions are not historical: they carry the request's own day and instant.</p></div></div>
+{% if catalog.error %}<div class="note n-break" role="alert"><div><strong>Metric catalog unavailable</strong><p><span class="mono">{{ catalog.error.code }}</span> · {{ catalog.error.message }}</p></div></div>
+{% else %}
+<div class="metric-layout">
+<nav class="card registry" aria-labelledby="registry-title"><h2 id="registry-title" class="label">Registry</h2>
+<ul>{% for item in items %}<li><a href="/workbench/metrics?metric_id={{ item.id|urlencode }}"{% if data and item.id == data.id %} aria-current="true"{% endif %}><span class="mono">{{ item.id }}</span><span class="small muted">v{{ item.version }}</span></a></li>{% endfor %}</ul>
+<p class="counts">The catalog returned <b>{{ catalog.data.item_count }}</b> definitions, ordered by <span class="mono">{{ catalog.data.ordering }}</span>. {% if catalog.data.truncated %}The list is capped; the platform returns no further page.{% else %}Nothing was left out.{% endif %}</p>
+</nav>
+<section class="card definition" aria-labelledby="definition-title">
+{% if data %}<div class="card-head"><h2 id="definition-title" class="h3">Definition</h2>{{ state(definition|envelope_state) }}</div>
+<dl class="kv">{% for key, value in data.items() if key not in ('id', 'version', 'label') %}<dt>{{ labels.get(key, key) }}</dt><dd>{% if value is string %}{{ value }}{% elif value is sequence %}{{ value|join(', ') }}{% else %}<span class="mono">{{ value|json_text }}</span>{% endif %}</dd>{% endfor %}</dl>
+{% elif definition and definition.error and definition.error.code == 'NOT_FOUND' %}<h2 id="definition-title" class="h3">No such metric</h2>
+<div class="note n-info">{{ icon('info') }}<div>The catalog has no definition with that ID. Choose one from the registry.</div></div>
+{% elif definition and definition.error %}<h2 id="definition-title" class="h3">Definition unavailable</h2>
+<div class="note n-break" role="alert"><div><p><span class="mono">{{ definition.error.code }}</span> · {{ definition.error.message }}</p></div></div>
+{% else %}<h2 id="definition-title" class="h3">No definition</h2><p class="small">The catalog lists no metric.</p>{% endif %}
+</section>
+</div>
+<section class="card" aria-labelledby="served-title"><h2 id="served-title">Where definitions are served</h2>
+<p class="help">From the permission matrix: every route whose action is <span class="mono">metric_definition</span>, outside this workbench. Each governed result names the definitions behind its figures in <span class="mono">metric_refs</span>.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Where definitions are served"><table class="data"><thead><tr><th scope="col">Surface</th><th scope="col">Route</th><th scope="col">Tool</th></tr></thead>
+<tbody>{% for row in surfaces %}<tr><td>{{ 'MCP' if row.method == 'MCP' else 'REST' }}</td><td class="mono">{{ row.method }} {{ row.path }}</td><td class="mono">{{ row.tool or '' }}</td></tr>{% endfor %}</tbody></table></div>
+</section>
+{% endif %}
+<details><summary>Governed result envelopes</summary>
+<h3 class="label">Metric catalog</h3><pre>{{ catalog|json_text }}</pre>
+{% if definition %}<h3 class="label">Definition</h3><pre>{{ definition|json_text }}</pre>{% endif %}
+</details>
+{% endblock %}

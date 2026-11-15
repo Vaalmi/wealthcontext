@@ -1,0 +1,54 @@
+name: Fresh checkout
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  replay-and-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      COMPOSE_PROJECT_NAME: wealthcontext-ci
+      ANTHROPIC_API_KEY: ""
+      ANTHROPIC_WORKSPACE_ID: ""
+      OPENAI_API_KEY: ""
+      GEMINI_API_KEY: ""
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.1"
+          python-version: "3.12"
+          enable-cache: false
+      - name: Install deterministic and browser check dependencies
+        run: |
+          uv sync --frozen --group browser
+          uv run --group browser playwright install --with-deps chromium
+      - name: Check lint and types
+        run: |
+          uv run ruff check src tests reference_oracle scripts/build_bundle.py scripts/check_stdio.py scripts/check_workbench.py
+          uv run pyright
+          uv run --group browser pyright scripts/check_workbench.py
+      - name: Build, bootstrap and run deterministic security and scenario tests
+        run: make test
+      - name: Check stdio from an unrelated directory
+        run: |
+          mkdir -p runtime
+          WEALTHCONTEXT_TOKEN='' docker compose --profile '*' config > runtime/ci-compose.yaml
+          uv run python scripts/check_stdio.py --compose "$PWD/runtime/ci-compose.yaml"
+      - name: Exercise the no-key replay and practitioner scenarios in Chromium
+        run: uv run --group browser python scripts/check_workbench.py --url http://127.0.0.1:8000 --output output/playwright/ci
+      - name: Show container diagnostics on failure
+        if: failure()
+        run: docker compose logs --no-color --tail=150
+      - name: Remove this runner's containers and synthetic volume
+        if: always()
+        run: docker compose down --volumes --remove-orphans

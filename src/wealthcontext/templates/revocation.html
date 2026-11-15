@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, badge %}
+{# A7: the seeded revocation (S04, Q02). Every row comes from this session's own seeded
+   store, reauthorized for this request; the main demo database is never read here. #}
+{% block title %}Seeded revocation{% endblock %}
+{% block main %}
+<div class="page-head"><div><p class="crumb"><a href="/workbench">Ask</a> / Seeded revocation</p><h1>A conversation after access changed</h1><p class="sub">Access is checked at the time of each request. When a household moves to another advisor, results retrieved earlier in a conversation become tombstones, and a follow-up that relied on them abstains without a new retrieval.</p></div>{{ badge('info', 'Seeded demo session') }}</div>
+{% if store is none %}
+<section class="card" aria-labelledby="seeded-title"><h2 id="seeded-title">This seeded conversation is {{ seeded_persona }}'s</h2>
+<p class="help">The seeded sequence replays security case Q02 as the advisor who lost the household. Nothing is staged or read for any other persona. Open the Current access scenario to run it as {{ seeded_persona }}.</p>
+<form action="/workbench/session" method="post"><input type="hidden" name="csrf" value="{{ session.csrf }}"><input type="hidden" name="apply_preset" value="true"><button type="submit" name="preset" value="access" class="button">Open the Current access scenario</button></form>
+</section>
+{% else %}
+<div class="note n-info">{{ icon('info') }}<div><strong>Demo: seeded revocation sequence</strong> (scenario S04, security case Q02). The earlier turn was retrieved and answered in this session's own seeded store, one second before the received CRM delivery that moved <span class="mono">WC-HH-0004</span> to another advisor on 1 Oct 2026 was committed. It cannot happen in the main demo, which already holds that delivery.</div></div>
+<div class="answers" data-sensitive>
+{% if error %}<div class="note n-break" role="alert"><div><strong>View unavailable</strong><p>{{ error }}</p></div></div>{% endif %}
+{% with run = followup, claim_links = false, tour = false %}{% include "partials/conversation.html" %}{% endwith %}
+</div>
+{% if not followup %}<section class="card composer">
+<form method="post" action="/workbench/revocation/answer" id="question-form" data-busy-label="Reauthorizing and verifying…"><input type="hidden" name="csrf" value="{{ session.csrf }}">
+<label for="question">Recorded follow-up · fixed input</label>
+<textarea id="question" rows="3" readonly>{{ followup_question if followup_available else 'The recorded follow-up is not installed.' }}</textarea>
+<div class="composer-footer"><p class="small">A genuine recorded turn replays against this conversation as it stands now. It is offered no data tool, so it cannot retrieve anything new. No API key is used.</p><button type="submit" class="button primary"{% if not followup_available %} disabled{% endif %}>Run the recorded follow-up</button></div>
+{% if not followup_available %}<p class="note n-incomplete">The recording of the follow-up turn is not installed, so only the tombstones are shown.</p>{% endif %}
+</form>
+</section>
+{% else %}<p class="small muted">The follow-up runs once per seeded session. Applying a context or scenario again starts a fresh one.</p>{% endif %}
+<section class="card" aria-labelledby="old-links-title"><h2 id="old-links-title" class="h3">Links issued with the earlier result</h2>
+<p class="help">These source handles came back with the snapshot retrieved before the reassignment. Opening one checks your access again in this session's store, so it now gets the neutral denial, the same as a handle that never existed.</p>
+<ul class="source-links">{% for handle in store.seed.earlier_handles %}<li><a href="{{ revocation_evidence_link(store.seed.earlier_result_id, handle) }}">{{ handle }}</a></li>{% endfor %}</ul>
+</section>
+{% endif %}
+{% endblock %}

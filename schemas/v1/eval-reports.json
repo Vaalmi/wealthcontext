@@ -1,0 +1,666 @@
+{
+  "$defs": {
+    "Error": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "UNAUTHENTICATED",
+            "NOT_AUTHORIZED",
+            "NOT_FOUND",
+            "INVALID_ARGUMENT",
+            "AS_OF_OUT_OF_RANGE",
+            "UNSUPPORTED_CURRENCY",
+            "RESULT_TOO_LARGE",
+            "POLICY_UNAVAILABLE",
+            "INTERNAL"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Details",
+          "type": "object"
+        },
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "retryable": {
+          "title": "Retryable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "retryable",
+        "details"
+      ],
+      "title": "Error",
+      "type": "object"
+    },
+    "EvalReportItem": {
+      "additionalProperties": false,
+      "properties": {
+        "actual_model_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Actual Model Ids",
+          "type": "array"
+        },
+        "case_set_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Case Set Sha256",
+          "type": "string"
+        },
+        "case_snapshot_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Case Snapshot Sha256",
+          "type": "string"
+        },
+        "completed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Completed At"
+        },
+        "deterministic_security_suite": {
+          "const": "requires_separate_test_evidence",
+          "title": "Deterministic Security Suite",
+          "type": "string"
+        },
+        "expected_trial_count": {
+          "minimum": 0,
+          "title": "Expected Trial Count",
+          "type": "integer"
+        },
+        "failure_count": {
+          "minimum": 0,
+          "title": "Failure Count",
+          "type": "integer"
+        },
+        "fallback_count": {
+          "minimum": 0,
+          "title": "Fallback Count",
+          "type": "integer"
+        },
+        "final_pass_count": {
+          "minimum": 0,
+          "title": "Final Pass Count",
+          "type": "integer"
+        },
+        "final_valid_count": {
+          "minimum": 0,
+          "title": "Final Valid Count",
+          "type": "integer"
+        },
+        "financial_pass_all_three_count": {
+          "minimum": 0,
+          "title": "Financial Pass All Three Count",
+          "type": "integer"
+        },
+        "financial_question_count": {
+          "minimum": 0,
+          "title": "Financial Question Count",
+          "type": "integer"
+        },
+        "first_attempt_denominator": {
+          "minimum": 0,
+          "title": "First Attempt Denominator",
+          "type": "integer"
+        },
+        "first_attempt_pass_count": {
+          "minimum": 0,
+          "title": "First Attempt Pass Count",
+          "type": "integer"
+        },
+        "first_pass_valid_count": {
+          "minimum": 0,
+          "title": "First Pass Valid Count",
+          "type": "integer"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "missing_trial_count": {
+          "minimum": 0,
+          "title": "Missing Trial Count",
+          "type": "integer"
+        },
+        "mode": {
+          "enum": [
+            "live_scored",
+            "live_calibration",
+            "replay",
+            "synthetic_test"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "model_expected_trial_count": {
+          "minimum": 0,
+          "title": "Model Expected Trial Count",
+          "type": "integer"
+        },
+        "pass_all_three": {
+          "additionalProperties": {
+            "type": "boolean"
+          },
+          "title": "Pass All Three",
+          "type": "object"
+        },
+        "pre_provider_check_fail_count": {
+          "minimum": 0,
+          "title": "Pre Provider Check Fail Count",
+          "type": "integer"
+        },
+        "pre_provider_check_pass_count": {
+          "minimum": 0,
+          "title": "Pre Provider Check Pass Count",
+          "type": "integer"
+        },
+        "pre_provider_expected_trial_count": {
+          "minimum": 0,
+          "title": "Pre Provider Expected Trial Count",
+          "type": "integer"
+        },
+        "pre_provider_missing_trial_count": {
+          "minimum": 0,
+          "title": "Pre Provider Missing Trial Count",
+          "type": "integer"
+        },
+        "pre_provider_recorded_trial_count": {
+          "minimum": 0,
+          "title": "Pre Provider Recorded Trial Count",
+          "type": "integer"
+        },
+        "pre_provider_security_checks_passed": {
+          "title": "Pre Provider Security Checks Passed",
+          "type": "boolean"
+        },
+        "predeclared_trial_denominator": {
+          "minimum": 0,
+          "title": "Predeclared Trial Denominator",
+          "type": "integer"
+        },
+        "primary_financial_gate_passed": {
+          "title": "Primary Financial Gate Passed",
+          "type": "boolean"
+        },
+        "prompt_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Prompt Sha256",
+          "type": "string"
+        },
+        "provider": {
+          "enum": [
+            "anthropic",
+            "openai",
+            "google"
+          ],
+          "title": "Provider",
+          "type": "string"
+        },
+        "provider_invocation_unknown_count": {
+          "minimum": 0,
+          "title": "Provider Invocation Unknown Count",
+          "type": "integer"
+        },
+        "provider_invoked_count": {
+          "minimum": 0,
+          "title": "Provider Invoked Count",
+          "type": "integer"
+        },
+        "provider_not_invoked_count": {
+          "minimum": 0,
+          "title": "Provider Not Invoked Count",
+          "type": "integer"
+        },
+        "question_count": {
+          "minimum": 0,
+          "title": "Question Count",
+          "type": "integer"
+        },
+        "raw_failure_count": {
+          "minimum": 0,
+          "title": "Raw Failure Count",
+          "type": "integer"
+        },
+        "recorded_at": {
+          "format": "date-time",
+          "title": "Recorded At",
+          "type": "string"
+        },
+        "recorded_trial_count": {
+          "minimum": 0,
+          "title": "Recorded Trial Count",
+          "type": "integer"
+        },
+        "rendered_answer_valid_count": {
+          "minimum": 0,
+          "title": "Rendered Answer Valid Count",
+          "type": "integer"
+        },
+        "retry_count": {
+          "minimum": 0,
+          "title": "Retry Count",
+          "type": "integer"
+        },
+        "schema_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Schema Sha256",
+          "type": "string"
+        },
+        "scored": {
+          "title": "Scored",
+          "type": "boolean"
+        },
+        "security_check_fail_count": {
+          "minimum": 0,
+          "title": "Security Check Fail Count",
+          "type": "integer"
+        },
+        "security_check_pass_count": {
+          "minimum": 0,
+          "title": "Security Check Pass Count",
+          "type": "integer"
+        },
+        "security_model_cases_passed": {
+          "title": "Security Model Cases Passed",
+          "type": "boolean"
+        },
+        "security_pass_all_three_count": {
+          "minimum": 0,
+          "title": "Security Pass All Three Count",
+          "type": "integer"
+        },
+        "security_question_count": {
+          "minimum": 0,
+          "title": "Security Question Count",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "running",
+            "completed",
+            "failed",
+            "deferred_not_run"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "provider",
+        "model",
+        "actual_model_ids",
+        "mode",
+        "status",
+        "recorded_at",
+        "completed_at",
+        "case_set_sha256",
+        "case_snapshot_sha256",
+        "prompt_sha256",
+        "schema_sha256",
+        "question_count",
+        "financial_question_count",
+        "security_question_count",
+        "expected_trial_count",
+        "recorded_trial_count",
+        "missing_trial_count",
+        "predeclared_trial_denominator",
+        "model_expected_trial_count",
+        "pre_provider_expected_trial_count",
+        "pre_provider_recorded_trial_count",
+        "pre_provider_missing_trial_count",
+        "pre_provider_check_pass_count",
+        "pre_provider_check_fail_count",
+        "pre_provider_security_checks_passed",
+        "first_attempt_pass_count",
+        "first_attempt_denominator",
+        "first_pass_valid_count",
+        "final_valid_count",
+        "rendered_answer_valid_count",
+        "final_pass_count",
+        "retry_count",
+        "fallback_count",
+        "failure_count",
+        "raw_failure_count",
+        "provider_invoked_count",
+        "provider_not_invoked_count",
+        "provider_invocation_unknown_count",
+        "security_check_pass_count",
+        "security_check_fail_count",
+        "pass_all_three",
+        "financial_pass_all_three_count",
+        "security_pass_all_three_count",
+        "scored",
+        "primary_financial_gate_passed",
+        "security_model_cases_passed",
+        "deterministic_security_suite"
+      ],
+      "title": "EvalReportItem",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "QualityFlag": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "AMBIGUOUS",
+            "AMBIGUOUS_ENTITY",
+            "PRICE_STALE",
+            "SOURCE_UNAVAILABLE",
+            "FX_UNAVAILABLE",
+            "HOUSEHOLD_MEMBERSHIP_CONFLICT",
+            "REPORTING_HOUSEHOLD_CONFLICT",
+            "OWNERSHIP_CONFLICT",
+            "OWNERSHIP_UNAVAILABLE",
+            "PENDING_SETTLEMENT",
+            "QUANTITY_BREAK",
+            "CASH_BREAK",
+            "RECONCILIATION_UNAVAILABLE",
+            "PRICE_SOURCE_MISMATCH",
+            "CLOSED_ACCOUNT_WITH_BALANCE",
+            "HELD_AWAY_EXCLUDED"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "detail": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Detail",
+          "type": "object"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "subject": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+          "title": "Subject",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "subject",
+        "detail"
+      ],
+      "title": "QualityFlag",
+      "type": "object"
+    },
+    "SurfaceList_EvalReportItem_": {
+      "additionalProperties": false,
+      "properties": {
+        "item_count": {
+          "maximum": 20,
+          "minimum": 0,
+          "title": "Item Count",
+          "type": "integer"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/EvalReportItem"
+          },
+          "maxItems": 20,
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "default": null,
+          "title": "Next Cursor",
+          "type": "null"
+        },
+        "ordering": {
+          "title": "Ordering",
+          "type": "string"
+        },
+        "total_item_count": {
+          "minimum": 0,
+          "title": "Total Item Count",
+          "type": "integer"
+        },
+        "truncated": {
+          "title": "Truncated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "items",
+        "item_count",
+        "total_item_count",
+        "ordering",
+        "truncated",
+        "next_cursor"
+      ],
+      "title": "SurfaceList[EvalReportItem]",
+      "type": "object"
+    }
+  },
+  "$id": "https://wealthcontext.example/schemas/v1/eval-reports.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "data": {
+            "type": "object"
+          },
+          "entitlement_revision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "error": {
+            "type": "null"
+          },
+          "policy_revision": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "type": "string"
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "status": {
+            "const": "ERROR"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "null"
+          },
+          "error": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "as_of": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "As Of"
+    },
+    "calculated_at": {
+      "format": "date-time",
+      "title": "Calculated At",
+      "type": "string"
+    },
+    "contract_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "data": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SurfaceList_EvalReportItem_"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "entitlement_revision": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Entitlement Revision"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Error"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "known_as_of": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Known As Of"
+    },
+    "metric_refs": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+        "type": "string"
+      },
+      "title": "Metric Refs",
+      "type": "array"
+    },
+    "policy_revision": {
+      "anyOf": [
+        {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Policy Revision"
+    },
+    "quality_flags": {
+      "items": {
+        "$ref": "#/$defs/QualityFlag"
+      },
+      "title": "Quality Flags",
+      "type": "array"
+    },
+    "result_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+      "title": "Result Id",
+      "type": "string"
+    },
+    "source_refs": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+        "type": "string"
+      },
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "COMPLETE",
+        "INCOMPLETE",
+        "ERROR"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "trace_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "valuation_date": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Valuation Date"
+    }
+  },
+  "required": [
+    "contract_version",
+    "trace_id",
+    "result_id",
+    "status",
+    "as_of",
+    "valuation_date",
+    "known_as_of",
+    "calculated_at",
+    "entitlement_revision",
+    "policy_revision",
+    "data",
+    "quality_flags",
+    "source_refs",
+    "metric_refs",
+    "error"
+  ],
+  "title": "Envelope[SurfaceList[EvalReportItem]]",
+  "type": "object"
+}

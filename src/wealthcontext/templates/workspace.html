@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, badge, state, figure, coach %}
+{% set selected_provider = providers|selectattr("id", "equalto", context.provider)|first %}
+{% block title %}{{ 'Guided replay' if tour else 'Ask' }}{% endblock %}
+{% block main %}
+<div class="page-head"><div><p class="crumb">Ask</p><h1>{{ 'Clean household, quarter end' if tour else 'Ask WealthContext' }}</h1><p class="sub">{% if context.mode == 'replay' %}The recorded question, tool choices and wording run again against fresh, currently authorized results. Every figure shown is retrieved and verified now.{% else %}Only a verified final response appears here. Every figure links to its governed result and source records.{% endif %}</p></div>{{ badge('info', 'Recorded replay' if context.mode == 'replay' else 'Live harness') }}</div>
+<div class="answers" data-sensitive>
+{% if error %}<div class="note n-break" role="alert"><div><strong>View unavailable</strong><p>{{ error }}</p></div></div>{% endif %}
+{% if tour and not history %}{% call coach(1, 'Run the recorded question') %}The question and its tool choices were recorded once. Running it retrieves fresh results under your current access and verifies every figure. No API key is used.{% endcall %}{% endif %}
+{% with run = session.run_metadata, claim_links = true %}{% include "partials/conversation.html" %}{% endwith %}
+</div>
+<section class="card composer">
+<form method="post" action="/workbench/answer" id="question-form" data-busy-label="Retrieving and verifying…"><input type="hidden" name="csrf" value="{{ session.csrf }}">
+<label for="question">{{ 'Recorded question · fixed inputs' if context.mode == 'replay' else 'Ask WealthContext' }}</label>
+<textarea id="question" name="question" rows="3" maxlength="12000" required{% if context.mode == 'replay' %} readonly{% endif %}>{{ replay_title if context.mode == 'replay' else question_preset }}</textarea>
+<div class="composer-footer"><p class="small">{% if context.mode == 'replay' %}The recorded tool choices run against fresh, authorized results. This is replay evidence, not a new evaluation.{% else %}Live mode uses the selected provider and can incur API usage.{% endif %}</p><button type="submit" class="button primary"{% if (context.mode == 'replay' and not replay_matches) or (context.mode == 'live' and not selected_provider.available) %} disabled{% endif %}>{{ 'Run replay' if context.mode == 'replay' else 'Ask and verify' }}</button></div>
+{% if context.mode == 'replay' and not replay_matches %}<p class="note n-incomplete">This recording does not match the selected context. Restore its fixed inputs or switch to live mode.</p>{% endif %}
+{% if context.mode == 'live' and not selected_provider.available %}<p class="note n-incomplete">The selected live provider has no key configured. The inspectors in the menu work without a key, and the clean household scenario has a recording.</p>{% endif %}
+</form>
+</section>
+{% endblock %}

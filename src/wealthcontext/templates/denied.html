@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, badge %}
+{# A5: one neutral denial. It is the same for an existing and an unknown resource: it
+   names only what was asked for and the request's own trace, never a name, a figure or
+   who has access, and it offers no way to request access. #}
+{% block title %}Access denied{% endblock %}
+{% block main %}
+<div class="page-head"><div><h1>{{ heading }}</h1><p class="sub">{% if requested %}Requested: <span class="mono">{{ requested }}</span> · {% endif %}valuation date {{ context.as_of|long_date }}</p></div></div>
+<section class="card denial" aria-labelledby="denial-title">
+<span class="denial-icon">{{ icon('denied') }}</span>
+<div class="denial-body">{{ badge('denied', 'Access denied') }}
+<h2 id="denial-title">{{ denial }}</h2>
+<p>Access is checked against your grants at the time of the request, not on the valuation date. Choosing an earlier date does not restore access.</p>
+<dl class="kv"><dt>Signed in as</dt><dd>{{ context.persona }} · {{ role_labels[role] }} (synthetic)</dd><dt>Requested</dt><dd>{{ requested_view }}</dd><dt>Reference</dt><dd><span class="mono">trace {{ envelope.trace_id }}</span>, for your compliance team</dd></dl>
+{% if menu %}<p><a class="button" href="{{ menu[0].path }}">Back to {{ menu[0].label }}</a></p>{% endif %}
+</div>
+</section>
+{% if revocation_link %}<section class="card" aria-labelledby="revocation-title"><h2 id="revocation-title" class="h3">What happens to an earlier conversation</h2><p class="help">A seeded session shows a conversation from before an access change: its results become tombstones, and a follow-up abstains without a new retrieval. It runs in a store of its own; no API key is needed.</p><p><a class="button" href="/workbench/revocation">Open the seeded revocation {{ icon('arrow') }}</a></p></section>{% endif %}
+{% endblock %}

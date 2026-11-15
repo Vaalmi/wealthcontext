@@ -1,0 +1,102 @@
+version: 1
+id: F10
+question: Can we value the household when custody reconciliation is unavailable?
+scenario: S08
+category: financial
+principal:
+  id: COMP-01
+  role: compliance
+request_time: '2026-11-01T12:00:00Z'
+valuation_date: '2026-10-09'
+known_as_of: '2026-10-31T16:00:00Z'
+household_ids:
+- WC-HH-0008
+authoritative_sources:
+  membership_reporting: CRM
+  quantity_cash: PAS trade-date snapshots
+  price: Custody latest eligible EOD close
+  fx: Same-day USD conversion fix; USD identity 1
+received_records:
+- source_system: CRM
+  feed: crm
+  business_date: '2026-10-09'
+  recorded_at: '2026-10-09T22:00:00Z'
+  source_record_ids:
+  - household-WC-HH-0008
+  observation: Household, membership and reporting assertions determine included managed accounts.
+- source_system: PAS-A
+  feed: pas_snapshots
+  business_date: '2026-10-09'
+  recorded_at: '2026-10-09T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-A accounts.
+- source_system: PAS-B
+  feed: pas_snapshots
+  business_date: '2026-10-09'
+  recorded_at: '2026-10-09T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-B accounts.
+- source_system: CUSTODY-A
+  feed: prices
+  business_date: '2026-10-09'
+  recorded_at: '2026-10-09T22:00:00Z'
+  source_record_ids: []
+  observation: Received close observations; secondary PAS quotes never replace custody pricing.
+- source_system: CUSTODY-B
+  feed: custody_snapshots
+  business_date: '2026-10-09'
+  recorded_at: '2026-10-09T22:00:00Z'
+  source_record_ids:
+  - position-WC-AC-0016-WC-SEC-0016
+  observation: TIMEOUT bytes end inside account0016 cash JSON; peer account groups verify.
+- source_system: CUSTODY-B
+  feed: prices
+  business_date: '2026-10-09'
+  recorded_at: '2026-10-09T22:00:00Z'
+  source_record_ids:
+  - price-WC-SEC-0016
+  observation: Authoritative custody close for included security 0016.
+missing_records:
+- CUSTODY-B final cash record is truncated mid-byte; account 0016 is atomically unavailable for reconciliation.
+requests:
+- alias: snapshot
+  tool: get_household_snapshot
+  arguments:
+    as_of: '2026-10-09'
+    known_as_of: '2026-10-31T16:00:00Z'
+    household_id: WC-HH-0008
+  status: COMPLETE
+  metric_refs:
+  - MV_POSITION@1
+  - CASH_USD@1
+  - HOUSEHOLD_ASSETS@1
+required_facts:
+- request: snapshot
+  entity_type: household
+  entity_id: WC-HH-0008
+  field: assets_usd
+  value: '8279.00'
+  unit: USD
+  household_id: WC-HH-0008
+  valuation_date: '2026-10-09'
+  known_as_of: '2026-10-31T16:00:00Z'
+required_predicates:
+- request: snapshot
+  entity_type: position
+  entity_id: WC-AC-0016:WC-SEC-0016
+  kind: reconciliation
+  field: reconciliation_status
+  expect: RECONCILIATION_UNAVAILABLE
+required_caveats:
+- flag: RECONCILIATION_UNAVAILABLE
+  subject: WC-AC-0016
+result_checks: []
+required_mentions: []
+forbidden_mentions: []
+expected_refusal: null
+manual_checks:
+- 'PAS remains complete: 76×40 + 79×41 + USD2000 cash = USD8279. Secondary custody absence warns but does
+  not block PAS valuation.'
+setup: []
+limitations: []
+required_source_disclosure: false

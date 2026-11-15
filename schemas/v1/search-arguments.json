@@ -1,0 +1,18 @@
+{
+  "$id": "https://wealthcontext.example/schemas/v1/search-arguments.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "name_query": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Name Query",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name_query"
+  ],
+  "title": "SearchArguments",
+  "type": "object"
+}

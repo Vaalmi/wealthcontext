@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, badge, state, figure, counts %}
+{# C3: the governed span tree of one trace, with no attribute, event, link or resource
+   field, then today's `trace` metadata for its action names. Each duration is the
+   platform's own; there are no summary tiles and no gaps, because nothing is computed
+   here. When the span export is unavailable, the metadata alone is shown. #}
+{% set data = spans.data if spans and spans.error is none else none %}
+{% block title %}Trace{% endblock %}
+{% block main %}
+<p class="crumb">{% if role == 'advisor' %}<a href="/workbench">Ask</a> / Trace{% else %}Compliance · Trace{% endif %}</p>
+<div class="page-head"><div><h1>Trace</h1>
+<p class="sub">{% if data %}<span class="mono">{{ data.trace_id }}</span> · {% endif %}The spans of one governed run, read after the platform checked who owns it and that you still cover every household it touched.</p></div></div>
+<form method="get" action="/workbench/trace" class="card filters" aria-labelledby="trace-form-title">
+<h2 id="trace-form-title" class="h3">Trace ID</h2>
+<div class="filter-grid"><div><label for="trace-id">Trace ID <span>32 hexadecimal digits</span></label><input id="trace-id" name="trace_id" value="{{ query.trace_id or '' }}" spellcheck="false" autocomplete="off"></div></div>
+<div class="filter-actions"><button type="submit" class="button primary">Open trace</button></div>
+</form>
+{% if not query.trace_id %}<div class="note n-info">{{ icon('info') }}<div>{% if role == 'advisor' %}Open a trace from one of your answers on the Ask page.{% else %}Enter a trace ID, or open one from a decision on the Access decisions page.{% endif %}</div></div>
+{% elif spans.error %}<div class="note n-break" role="alert">{{ icon('break') }}<div><strong>Trace unavailable</strong><p><span class="mono">{{ spans.error.code }}</span> · {{ spans.error.message }}</p></div></div>
+{% else %}
+<section class="card" aria-labelledby="spans-title"><div class="card-head"><h2 id="spans-title">Span tree</h2>{{ state(spans|envelope_state) }}</div>
+{% if data.span_source == 'UNAVAILABLE' %}<div class="note n-info">{{ icon('info') }}<div><strong>The span export is not available.</strong> No span is shown; the run's recorded metadata is below.</div></div>
+{% else %}
+<p class="help">Span names come from a closed list; any other name is shown as <span class="mono">other</span>. Source: <span class="mono">{{ data.span_source }}</span>.</p>
+{% if data.scan_truncated %}<div class="note n-incomplete">{{ icon('incomplete') }}<div>Only the newest part of the span export was read, so older spans of this trace may be missing.</div></div>{% endif %}
+{% if roots %}<ul class="span-tree" aria-label="Spans">{% for span in roots recursive %}<li><div class="span-row"><span class="mono span-name">{{ span.name }}</span>{{ state(span.status_code) }}<span class="small">{{ figure({'value': span.duration_ms, 'unit': none}) }} ms</span><span class="small muted">started <span class="mono">{{ span.start_time }}</span></span>{% if span.parent_omitted %}{{ badge('info', 'Parent not returned') }}{% endif %}<span class="mono small muted">{{ span.span_id }}</span></div>{% if children.get(span.span_id) %}<ul>{{ loop(children.get(span.span_id)) }}</ul>{% endif %}</li>{% endfor %}</ul>
+{% else %}<p class="small">The export holds no span of this trace that ended by the time of this request.</p>{% endif %}
+{{ counts(data, 'spans') }}
+{% endif %}
+</section>
+<section class="card" aria-labelledby="meta-title"><h2 id="meta-title">Recorded in this trace</h2>
+{% if metadata is none or metadata.error %}<div class="note n-break" role="alert"><div><p>{% if metadata %}<span class="mono">{{ metadata.error.code }}</span> · {{ metadata.error.message }}{% else %}The trace metadata was not read.{% endif %}</p></div></div>
+{% else %}{% set meta = metadata.data %}
+<p class="help">From the governed <span class="mono">trace</span>: the results the run issued and the authorization decisions it took, under the platform's own action names.</p>
+<h3 class="label">Decisions</h3>
+{% if meta.decisions['items'] %}<div class="table-scroll" tabindex="0" role="region" aria-label="Decisions in this trace"><table class="data"><thead><tr><th scope="col">Recorded</th><th scope="col">Action</th><th scope="col">Outcome</th><th scope="col">Reason</th><th scope="col">Households</th></tr></thead>
+<tbody>{% for item in meta.decisions['items'] %}<tr><td class="when">{{ item.recorded_at|long_instant }}</td><td class="mono">{{ item.action }}</td><td>{% if item.allowed %}{{ badge('complete', 'Allowed') }}{% else %}{{ badge('denied', 'Denied') }}{% endif %}</td><td class="mono">{{ item.reason }}</td><td class="mono ids">{% for resource in item.resources %}{{ resource }}{% if not loop.last %}, {% endif %}{% else %}<span class="muted">None</span>{% endfor %}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+{{ counts(meta.decisions, 'decisions') }}
+<h3 class="label">Results</h3>
+{% if meta.results['items'] %}<div class="table-scroll" tabindex="0" role="region" aria-label="Results in this trace"><table class="data"><thead><tr><th scope="col">Recorded</th><th scope="col">Result</th><th scope="col">Status</th></tr></thead>
+<tbody>{% for item in meta.results['items'] %}<tr><td class="when">{{ item.recorded_at|long_instant }}</td><td class="mono">{{ item.result_id }}</td><td>{{ state(item.status) }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+{{ counts(meta.results, 'results') }}
+{% endif %}
+</section>
+{% endif %}
+{% if spans %}<details><summary>Governed result envelopes</summary><h3 class="label">Span tree</h3><pre>{{ spans|json_text }}</pre>{% if metadata %}<h3 class="label">Trace metadata</h3><pre>{{ metadata|json_text }}</pre>{% endif %}</details>{% endif %}
+{% endblock %}

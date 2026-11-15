@@ -1,0 +1,11 @@
+{
+  "id": "HAND-THRESHOLD",
+  "description": "40 shares at USD 25 and USD 9000 cash: 1000 / 10000 = 10%, exactly the inclusive threshold",
+  "positions": [{"quantity": "40", "price": "25.00", "fx_to_usd": "1"}],
+  "cash": [{"amount": "9000.00", "fx_to_usd": "1"}],
+  "expected_assets_usd": "10000.00",
+  "issuer_exposure_usd": "1000.00",
+  "threshold_pct": "10.00",
+  "expected_concentration_pct": "10.00",
+  "expected_breach": true
+}

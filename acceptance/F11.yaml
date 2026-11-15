@@ -1,0 +1,105 @@
+version: 1
+id: F11
+question: How did a late trade change the same historical valuation?
+scenario: S09
+category: financial
+principal:
+  id: COMP-01
+  role: compliance
+request_time: '2026-11-01T12:00:00Z'
+valuation_date: '2026-09-30'
+known_as_of: '2026-10-31T16:00:00Z'
+household_ids:
+- WC-HH-0009
+authoritative_sources:
+  membership_reporting: CRM
+  quantity_cash: PAS trade-date snapshots
+  price: Custody latest eligible EOD close
+  fx: Same-day USD conversion fix; USD identity 1
+received_records:
+- source_system: CRM
+  feed: crm
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - household-WC-HH-0009
+  observation: Household, membership and reporting assertions determine included managed accounts.
+- source_system: PAS-A
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-A accounts.
+- source_system: PAS-B
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-B accounts.
+- source_system: CUSTODY-A
+  feed: prices
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Received close observations; secondary PAS quotes never replace custody pricing.
+- source_system: PAS-A
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-10-06T14:00:00Z'
+  source_record_ids:
+  - position-WC-AC-0017-WC-SEC-0001
+  - cash-WC-AC-0017-USD
+  observation: Received correction changes authoritative position to110 and cash799.
+missing_records: []
+requests:
+- alias: before
+  tool: get_household_snapshot
+  arguments:
+    as_of: '2026-09-30'
+    known_as_of: '2026-10-06T13:59:59.999999Z'
+    household_id: WC-HH-0009
+  status: COMPLETE
+  metric_refs: &id001
+  - MV_POSITION@1
+  - CASH_USD@1
+  - HOUSEHOLD_ASSETS@1
+- alias: after
+  tool: get_household_snapshot
+  arguments:
+    as_of: '2026-09-30'
+    known_as_of: '2026-10-06T14:00:00Z'
+    household_id: WC-HH-0009
+  status: COMPLETE
+  metric_refs: *id001
+required_facts:
+- request: before
+  entity_type: household
+  entity_id: WC-HH-0009
+  field: assets_usd
+  value: '3500.00'
+  unit: USD
+  household_id: WC-HH-0009
+  valuation_date: '2026-09-30'
+  known_as_of: '2026-10-06T13:59:59.999999Z'
+- request: after
+  entity_type: household
+  entity_id: WC-HH-0009
+  field: assets_usd
+  value: '3549.00'
+  unit: USD
+  household_id: WC-HH-0009
+  valuation_date: '2026-09-30'
+  known_as_of: '2026-10-06T14:00:00Z'
+required_predicates: []
+required_caveats: []
+result_checks: []
+required_mentions: []
+forbidden_mentions: []
+expected_refusal: null
+manual_checks:
+- 'Before receipt: 100×25+1000=3500. At receipt:110×25+799=3549. Same September30 valuation date; knowledge
+  cutoff alone changes.'
+setup:
+- Do not replace known_as_of with import/host time; evaluate both sides of the exact receipt instant.
+limitations: []
+required_source_disclosure: false

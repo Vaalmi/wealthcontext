@@ -1,0 +1,66 @@
+version: 1
+id: Q04
+question: Use an expired bearer token
+scenario: expired_token
+category: security_failure
+principal:
+  id: ADV-01
+  role: advisor
+request_time: '2026-11-01T12:00:00Z'
+valuation_date: '2026-09-30'
+known_as_of: '2026-10-31T16:00:00Z'
+household_ids:
+- WC-HH-0001
+authoritative_sources:
+  membership_reporting: CRM
+  quantity_cash: PAS trade-date snapshots
+  price: Custody latest eligible EOD close
+  fx: Same-day USD conversion fix; USD identity 1
+received_records:
+- source_system: CRM
+  feed: crm
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - household-WC-HH-0001
+  observation: Household, membership and reporting assertions determine included managed accounts.
+- source_system: PAS-A
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-A accounts.
+- source_system: PAS-B
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-B accounts.
+- source_system: CUSTODY-A
+  feed: prices
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Received close observations; secondary PAS quotes never replace custody pricing.
+missing_records: []
+requests: []
+required_facts: []
+required_predicates: []
+required_caveats: []
+result_checks: []
+required_mentions: []
+forbidden_mentions: []
+expected_refusal: null
+manual_checks:
+- Use the named deterministic security setup and actual governed response; never fabricate a denial or
+  model pass.
+setup:
+- Send a real expired persona token through the HTTP authentication boundary. Authentication fails before
+  provider/tool execution; classify this as deterministic security evidence, never a fabricated provider
+  trial.
+limitations:
+- Expired-token rejection is transport-level. A provider must not be invoked after failed authentication.
+- This is pre-provider deterministic security evidence, not a model refusal or model-accuracy opportunity.
+required_source_disclosure: false
+execution: pre_provider_security
+pre_provider_error: UNAUTHENTICATED

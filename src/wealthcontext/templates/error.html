@@ -1,0 +1,19 @@
+{% from "partials/macros.html" import badge %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ title }} · WealthContext</title>
+<link rel="icon" type="image/svg+xml" href="/workbench/assets/favicon.svg">
+<link rel="stylesheet" href="/workbench/assets/workbench.css">
+</head>
+<body>
+<main class="error-page">
+<img src="/workbench/assets/lockup.svg" alt="WealthContext" width="165" height="28">
+{% if denied %}{{ badge('denied', 'Access denied') }}{% endif %}
+<h1>{{ title }}</h1>
+<p>{{ message }}</p>
+<a class="button" href="/">Return to the local demo</a>
+</main>
+</body>
+</html>

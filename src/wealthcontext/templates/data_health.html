@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, state, figure, counts, feed_state %}
+{# O1: one governed `feed_health`. Every expected cell of the range is drawn, the
+   never-received ones included, each with its own glyph and a word, and the same cells as
+   a table. The only tile is the quality report's `incomplete_household_count`. Every
+   count is a returned field; nothing is counted or compared here, and there is no
+   export (ADR 0009 points 5, 9, 11 and 12). #}
+{% block title %}Data health{% endblock %}
+{% block main %}
+<p class="crumb">Operations · Data health</p>
+<div class="page-head"><div><h1>Data health</h1>
+<p class="sub">Every feed the platform expects from every source, for each business day in the range, read through the governed <span class="mono">feed_health</span>. A cell shows the latest run recorded by your knowledge cutoff, or that none was.</p></div></div>
+<form method="get" action="/workbench/data-health" class="card filters" aria-labelledby="range-title">
+<h2 id="range-title" class="h3">Range</h2>
+<div class="filter-grid">
+<div><label for="range-from">From <span>business date</span></label><input id="range-from" name="date_from" type="date" value="{{ date_from.isoformat() }}"></div>
+<div><label for="range-to">To <span>business date, inclusive</span></label><input id="range-to" name="date_to" type="date" value="{{ date_to.isoformat() }}"></div>
+</div>
+<input type="hidden" name="view" value="{{ query.view }}">
+<div class="filter-actions"><button type="submit" class="button primary">Show range</button><a class="button ghost" href="/workbench/data-health">Default range</a></div>
+<p class="help">The default runs from the data window's first business day to your valuation date. The platform resolves each date as it resolves a valuation date and allows at most the window's 25 business days. Cells are as known at {{ context.known_as_of|long_instant }}.</p>
+</form>
+{% if health.error %}<div class="note n-break" role="alert">{{ icon('break') }}<div><strong>Feed health unavailable</strong><p><span class="mono">{{ health.error.code }}</span> · {{ health.error.message }}</p></div></div>
+{% elif data %}
+<section class="kpi-grid" aria-label="Summary">
+<div class="kpi"><p class="label">Households incomplete</p>
+{% if quality and quality.error is none %}<p class="kpi-value">{{ figure({'value': quality.data.incomplete_household_count}) }}</p>
+<p class="small muted">On {{ quality.valuation_date|long_date }}, of {{ quality.data.evaluated_household_count }} households the governed <span class="mono">get_data_quality_report</span> evaluated.</p>
+{% else %}<p class="kpi-value muted">Unavailable</p>
+<p class="small muted">{% if quality %}The quality report returned <span class="mono">{{ quality.error.code }}</span>.{% else %}The quality report was not read.{% endif %}</p>{% endif %}
+</div>
+</section>
+{% if quality and quality.error is none and quality.quality_flags %}<section class="card" aria-labelledby="quality-flags-title"><h2 id="quality-flags-title" class="h3">Quality report warnings</h2>
+<p class="help">Every flag the quality report returned for {{ quality.valuation_date|long_date }}, each with its subject.</p>
+{% with flags = quality.quality_flags %}{% include "partials/flags.html" %}{% endwith %}</section>{% endif %}
+<section class="card" aria-labelledby="cells-title">
+<div class="card-head"><h2 id="cells-title">Feeds by business date</h2>{{ state(health|envelope_state) }}</div>
+<p class="sub">{{ data.date_from|long_date }} to {{ data.date_to|long_date }} · {{ data.business_day_count }} business days</p>
+{{ counts(data, 'expected cells') }}
+{% with flags = health.quality_flags %}{% include "partials/flags.html" %}{% endwith %}
+<ul class="state-legend" aria-label="Cells by state">{% for item in data.state_counts %}<li>{{ feed_state(item.state) }}<b>{{ item.cell_count }}</b></li>{% endfor %}</ul>
+<nav class="tabs" aria-label="Views of the cells"><a href="{{ view_links.grid }}"{% if query.view == 'grid' %} aria-current="true"{% endif %}>Grid</a><a href="{{ view_links.table }}"{% if query.view == 'table' %} aria-current="true"{% endif %}>Table</a></nav>
+{% if query.view == 'grid' %}
+<p class="help">One row per source and feed, one column per business day. A cell that is not a success opens its feed run; the table view links every run.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-labelledby="cells-title"><table class="data health-grid">
+<caption class="sr-only">Latest run state of each expected feed, by source and business date</caption>
+<thead><tr><th scope="col">Source and feed</th>{% for day in data.business_dates %}<th scope="col" class="day">{{ day|long_date }}</th>{% endfor %}</tr></thead>
+<tbody>{% for row in rows %}<tr><th scope="row" class="pair"><span class="mono">{{ row.source_system }}</span><span class="mono">{{ row.feed }}</span></th>
+{% for cell in row.cells %}{% set mark = feed_states[cell.state] if cell else none %}<td class="cell">{% if cell is none %}<span class="muted">Not returned</span>{% elif cell.run_id and cell.state != 'SUCCESS' %}<a class="cell-mark s-{{ mark.kind }}" href="{{ feed_run_link(cell.run_id) }}">{{ icon(mark.glyph) }}<span class="cell-word">{{ mark.label }}</span><span class="sr-only">: {{ row.source_system }} {{ row.feed }}, {{ cell.business_date|long_date }}. Open the feed run.</span></a>{% else %}<span class="cell-mark s-{{ mark.kind }}">{{ icon(mark.glyph) }}<span class="cell-word">{{ mark.label }}</span></span>{% endif %}</td>{% endfor %}</tr>{% endfor %}</tbody>
+</table></div>
+{% else %}
+<p class="help">Every expected cell in the platform's order, each with its latest run at the cutoff.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-labelledby="cells-title"><table class="data">
+<thead><tr><th scope="col">Business date</th><th scope="col">Source system</th><th scope="col">Feed</th><th scope="col">State</th><th scope="col">Latest run</th><th scope="col">Upstream</th><th scope="col" class="num">Accepted records</th><th scope="col" class="num">Rejected records</th><th scope="col" class="num">Runs by the cutoff</th><th scope="col">Recorded</th></tr></thead>
+<tbody>{% for cell in data['items'] %}<tr><td class="when">{{ cell.business_date|long_date }}</td><td class="mono">{{ cell.source_system }}</td><td class="mono">{{ cell.feed }}</td><td>{{ feed_state(cell.state) }}</td>
+{% if cell.run_id %}<td class="ids"><a class="mono run-id" href="{{ feed_run_link(cell.run_id) }}">{{ cell.run_id }}</a></td><td class="mono">{{ cell.upstream_status }}</td><td class="num">{{ cell.accepted_records }}</td><td class="num">{{ cell.rejected_records }}</td><td class="num">{{ cell.run_count }}</td><td class="when">{{ cell.recorded_at|long_instant }}</td>
+{% else %}<td colspan="6" class="muted">No run recorded by the cutoff</td>{% endif %}</tr>{% endfor %}</tbody>
+</table></div>
+{% endif %}
+</section>
+{% endif %}
+<details><summary>Governed result envelopes</summary><pre>{{ health|json_text }}</pre>{% if quality %}<pre>{{ quality|json_text }}</pre>{% endif %}</details>
+{% endblock %}

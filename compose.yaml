@@ -1,0 +1,75 @@
+name: wealthcontext
+services:
+  opa:
+    build:
+      context: .
+      target: policy_runtime
+    command: ["run", "--server", "--addr=0.0.0.0:8181", "--bundle", "/bundle/bundle.tar.gz"]
+    networks: [policy]
+    healthcheck:
+      test: ["CMD", "/opa", "eval", "--fail", "--format=raw", 'http.send({"method":"get","url":"http://127.0.0.1:8181/health?bundles"}).status_code == 200']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+  app:
+    image: wealthcontext-app:local
+    build:
+      context: .
+      target: app_runtime
+    environment:
+      WEALTHCONTEXT_OPA_URL: http://opa:8181
+      WEALTHCONTEXT_HOST_PROJECT_DIR: ${WEALTHCONTEXT_HOST_PROJECT_DIR:-${PWD}}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_WORKSPACE_ID: ${ANTHROPIC_WORKSPACE_ID:-}
+      WEALTHCONTEXT_ANTHROPIC_MODEL: ${WEALTHCONTEXT_ANTHROPIC_MODEL:-claude-opus-5-5}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      WEALTHCONTEXT_OPENAI_MODEL: ${WEALTHCONTEXT_OPENAI_MODEL:-gpt-6-luna}
+      WEALTHCONTEXT_OPENAI_REASONING_EFFORT: ${WEALTHCONTEXT_OPENAI_REASONING_EFFORT:-high}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      WEALTHCONTEXT_GOOGLE_MODEL: ${WEALTHCONTEXT_GOOGLE_MODEL:-gemini-3.8-flash}
+    volumes: [database:/data]
+    ports: ["127.0.0.1:8000:8000"]
+    networks: [default, policy]
+    depends_on:
+      opa:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 3s
+      timeout: 4s
+      retries: 20
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+  test:
+    image: wealthcontext-app:local
+    profiles: [test]
+    build:
+      context: .
+      target: app_runtime
+    command: ["pytest"]
+    environment:
+      WEALTHCONTEXT_DATA_DIR: /tmp/wealthcontext-test
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+  mcp:
+    image: wealthcontext-app:local
+    profiles: [mcp-client]
+    build:
+      context: .
+      target: app_runtime
+    command: ["wealthcontext", "bridge"]
+    environment:
+      WEALTHCONTEXT_MCP_URL: http://app:8000/mcp
+      WEALTHCONTEXT_TOKEN: ${WEALTHCONTEXT_TOKEN:-}
+    stdin_open: true
+    networks: [default]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+networks:
+  policy:
+    internal: true
+volumes:
+  database:

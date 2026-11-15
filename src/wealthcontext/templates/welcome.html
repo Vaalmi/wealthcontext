@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, badge %}
+{% block title %}Numbers you can stand behind{% endblock %}
+{% block main %}
+<div class="hero">
+<div>
+<p class="label">Open-source reference · synthetic data</p>
+<h1 class="display-xl">Numbers you can stand behind.</h1>
+<p class="lead">Agents in wealth management fail on context: which household, which date, which price, which source wins, and who may see it. WealthContext answers those questions in a governed layer, and the model only explains what it returns.</p>
+<form action="/workbench/session" method="post" class="hero-cta"><input type="hidden" name="csrf" value="{{ session.csrf }}"><input type="hidden" name="apply_preset" value="true"><button type="submit" name="preset" value="clean" class="button primary large">Take the five-minute tour {{ icon('arrow') }}</button><span class="small muted">Recorded tool choices, freshly retrieved and verified. No API key, no real client data.</span></form>
+<ol class="tour-steps"><li>Pick a scenario</li><li>Open a figure and follow it to its source</li><li>See an incomplete valuation that shows no total</li><li>See a neutral denial</li></ol>
+</div>
+<section class="diagram" aria-label="How WealthContext sits between sources and agents">
+<div class="diagram-col"><h2 class="label">Sources</h2><ul><li><b>CRM</b><span>households, coverage</span></li><li><b>PAS</b><span>quantity, cash</span></li><li><b>Custody</b><span>prices, settlement</span></li><li><b>FX</b><span>daily fix</span></li></ul></div>
+<div class="diagram-hub"><img src="/workbench/assets/favicon.svg" alt="" width="48" height="48"><b>Facts, permissions, arithmetic</b></div>
+<div class="diagram-col"><h2 class="label">Agents</h2><ul><li><b>Workbench</b><span>verified answers</span></li><li><b>MCP hosts</b><span>governed tools</span></li><li><b>Evaluation runner</b><span>verified answers</span></li></ul><p class="small muted">Every tool is typed and audited, and the platform does the arithmetic. Workbench answers are verified claim by claim; prose written by an external host is not.</p></div>
+</section>
+</div>
+<div class="section-head"><div><h2>Pick a scenario</h2><p>Each one sets the persona and dates for you and opens a clean view.</p></div></div>
+<form action="/workbench/session" method="post" class="scenario-grid"><input type="hidden" name="csrf" value="{{ session.csrf }}"><input type="hidden" name="apply_preset" value="true">
+{% for preset in presets %}<button type="submit" name="preset" value="{{ preset.id }}" class="scenario"><span class="scenario-top">{{ badge(preset.kind, preset.state) }}<span class="mono muted">{{ preset.context.persona }} · {{ preset.context.as_of|long_date }}</span></span><span class="scenario-title">{{ preset.label }}</span><span class="scenario-text">{{ preset.summary }}</span><span class="scenario-foot"><span>{{ preset.footer }}</span><span class="open">Open {{ icon('arrow') }}</span></span></button>
+{% endfor %}</form>
+<p class="small muted boundary">All households and people are synthetic. Choosing a scenario or a persona creates a local development session; production API and MCP requests still require bearer credentials. No business data is loaded on this page.</p>
+{% endblock %}

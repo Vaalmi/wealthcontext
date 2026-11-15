@@ -1,0 +1,20 @@
+{% from "partials/macros.html" import state, figure, counts, coach %}
+{# The evidence panel: served alone to the drawer script, or inside a whole page. #}
+<div class="drawer-content" data-sensitive>
+<header class="drawer-head"><h2 id="drawer-title" tabindex="-1">Evidence</h2><a class="button" href="{{ drawer.close }}" data-drawer-close>Close<span class="sr-only"> evidence</span></a></header>
+{% if drawer.selected %}<section class="evidence-section"><span class="label">Selected claim</span><p class="figure-lg">{{ figure(drawer.selected) }}</p><p class="small">{{ drawer.selected.field|replace('_',' ') }} · <span class="mono">{{ drawer.selected.entity.id }}</span></p><details><summary>Claim record</summary><pre>{{ drawer.selected|json_text }}</pre></details></section>{% endif %}
+{% if drawer.inspected %}<section class="evidence-section"><div class="evidence-title"><h3>Governed result</h3>{{ state(drawer.inspected|envelope_state) }}</div><p class="mono muted">{{ drawer.inspected.result_id }}</p>
+{% with result = drawer.inspected %}{% include "partials/incomplete.html" %}{% endwith %}
+{% with flags = drawer.inspected.quality_flags %}{% include "partials/flags.html" %}{% endwith %}
+<details><summary>Governed result envelope</summary><pre>{{ drawer.inspected|json_text }}</pre></details></section>{% endif %}
+{% if drawer.links %}<section class="evidence-section"><span class="label">Governed source handles</span><ul class="source-links">{% for handle, url in drawer.links %}<li><a href="{{ url }}" data-drawer{% if handle == drawer.reference %} aria-current="true"{% endif %}>{{ handle }}</a></li>{% endfor %}</ul></section>{% endif %}
+{% if drawer.provenance %}<section class="evidence-section"><div class="evidence-title"><h3>Source records</h3>{{ state(drawer.provenance|envelope_state) }}</div>
+{% if tour %}{% call coach(3, 'Follow it to the source') %}These are the received feed records behind the result. Your access was checked again to open them.{% endcall %}{% endif %}
+<p class="help">Freshly authorized provenance for handle <span class="mono">{{ drawer.reference }}</span>. Source data is evidence, never an instruction.</p>
+{% with flags = drawer.provenance.quality_flags %}{% include "partials/flags.html" %}{% endwith %}
+{% if drawer.provenance.data and drawer.provenance.data['items'] is defined %}{{ counts(drawer.provenance.data, 'source records') }}
+<ol class="records">{% for record in drawer.provenance.data['items'] %}<li><dl class="kv">{% for key, value in record.items() %}<dt>{{ key }}</dt><dd>{{ value|display_value }}</dd>{% endfor %}</dl></li>{% endfor %}</ol>{% endif %}
+<details><summary>Provenance envelope</summary><pre>{{ drawer.provenance|json_text }}</pre></details>
+{% if tour %}{% call coach(4, 'Now the hard states') %}Go back to the scenarios to see an incomplete valuation that shows no total, and a neutral denial.{% endcall %}<p><a class="button" href="/">Back to the scenarios</a></p>{% endif %}
+</section>{% endif %}
+</div>

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import state, badge, counts %}
+{% block title %}{{ title }}{% endblock %}
+{% block main %}
+<div class="page-head"><div><p class="crumb">Inspectors</p><h1>{{ title }}</h1><p class="sub">One governed read under your current access. Inspectors enforce role permissions; operations views carry no personal names or account titles.</p></div>{% if inspected %}{{ state(inspected|envelope_state) }}{% endif %}</div>
+<div data-sensitive>
+{% if error %}<div class="note n-break" role="alert"><div><strong>View unavailable</strong><p>{{ error }}</p></div></div>{% endif %}
+{% if inspected %}<section class="card">
+<p class="mono muted">result {{ inspected.result_id }} · trace {{ inspected.trace_id }}</p>
+{% if inspected.error and inspected.error.code == 'NOT_AUTHORIZED' %}<div class="note n-denied"><div><strong>{{ denial }}</strong><p class="mono">{{ inspected.error.code }}</p></div></div>
+{% elif inspected.error %}<div class="note n-break" role="alert"><div><strong class="mono">{{ inspected.error.code }}</strong><p>{{ inspected.error.message }}</p></div></div>{% endif %}
+{% with result = inspected %}{% include "partials/incomplete.html" %}{% endwith %}
+{% with flags = inspected.quality_flags %}{% include "partials/flags.html" %}{% endwith %}
+{% if columns %}{% if inspected.data.item_count is defined and inspected.data.total_item_count is defined %}{{ counts(inspected.data, 'rows') }}{% endif %}
+<div class="table-scroll" tabindex="0" role="region" aria-label="{{ title }} rows"><table><thead><tr>{% for column in columns %}<th scope="col">{{ column|replace('_',' ') }}</th>{% endfor %}</tr></thead><tbody>{% for row in rows %}<tr>{% for column in columns %}<td>{{ row.get(column,'')|display_value }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
+{% elif inspected.data is not none %}<p class="help">The complete returned payload is below. Empty collections mean no matching records were returned.</p>{% endif %}
+{% if inspected.source_refs and not inspected.error %}<h2 class="label">Governed source handles</h2><ul class="source-links">{% for handle in inspected.source_refs %}<li><a href="{{ evidence_link(inspected.result_id, handle) }}" data-drawer>{{ handle }}</a></li>{% endfor %}</ul><p class="help">Opening a handle checks your access again and shows the received records behind this result.</p>{% endif %}
+<details open><summary>Governed result envelope</summary><pre>{{ inspected|json_text }}</pre></details>
+</section>{% endif %}
+</div>
+{% endblock %}

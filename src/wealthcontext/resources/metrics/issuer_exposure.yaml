@@ -1,0 +1,9 @@
+id: ISSUER_EXPOSURE@1
+version: 1
+label: Operating-company issuer exposure
+formula: Sum of unrounded MV_POSITION@1 for common stocks of each issuer
+inputs: [Complete household valuation, security type, issuer identity]
+inclusion_rules: Common-stock issuer numerators; cash and MMF remain in the household denominator. Funds, ETFs and MMF are separate fund vehicles grouped by security, never sponsor.
+cutoffs: Valuation and received knowledge cutoffs apply to every input and security classification
+rounding: Decimal precision 28, HALF_EVEN sums; rank unrounded exposure descending then issuer ID. Display USD and percentage points HALF_UP to 0.01.
+limitations: No fund look-through. Incomplete assets emit no exposure totals or percentages; nonpositive complete assets emit no percentages. Issuer and fund/security list ranks have separate scopes.

@@ -1,0 +1,50 @@
+{
+  "$defs": {
+    "JsonValue": {}
+  },
+  "$id": "https://wealthcontext.example/schemas/v1/error.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "code": {
+      "enum": [
+        "UNAUTHENTICATED",
+        "NOT_AUTHORIZED",
+        "NOT_FOUND",
+        "INVALID_ARGUMENT",
+        "AS_OF_OUT_OF_RANGE",
+        "UNSUPPORTED_CURRENCY",
+        "RESULT_TOO_LARGE",
+        "POLICY_UNAVAILABLE",
+        "INTERNAL"
+      ],
+      "title": "Code",
+      "type": "string"
+    },
+    "details": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Details",
+      "type": "object"
+    },
+    "message": {
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Message",
+      "type": "string"
+    },
+    "retryable": {
+      "title": "Retryable",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "code",
+    "message",
+    "retryable",
+    "details"
+  ],
+  "title": "Error",
+  "type": "object"
+}

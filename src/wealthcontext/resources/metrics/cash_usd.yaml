@@ -1,0 +1,10 @@
+id: CASH_USD@1
+version: 1
+label: Trade-date cash in USD
+formula: PAS trade-date cash times FX to USD per currency
+inputs: [PAS cash, currency, FX rate]
+inclusion_rules: Cash only; a sweep MMF is a security and is never also cash
+cutoffs: Valid date and received knowledge cutoff apply to every input
+rounding: Decimal precision 28, HALF_EVEN intermediates; unrounded amounts enter sums; display HALF_UP to 0.01 USD
+fx: USD identity one; foreign cash requires a valuation-date fix with rate_at at or before known_as_of
+limitations: Custody settled cash is not added; missing foreign fixes are not carried forward

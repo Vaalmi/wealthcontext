@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, badge, state, figure, figure_link, counts %}
+{# A1 and A1b. Three kinds of governed result, each shown as returned: the entitled
+   households (list_households), one snapshot per listed household, and book
+   concentration. There is no book figure: nothing is summed, netted or compared, and
+   every count is a field one of these results returned. #}
+{% set book = concentration.data if concentration and concentration.error is none else none %}
+{% block title %}My book{% endblock %}
+{% block main %}
+<div class="page-head"><div><h1>My book</h1><p class="sub">Households you are entitled to now, {% if concentration and concentration.valuation_date %}valued on {{ concentration.valuation_date|long_date }}{% else %}requested for {{ context.as_of|long_date }}{% endif %}, known as of {{ context.known_as_of|long_instant }}. Access is checked against your current grants on every request.</p></div>
+<form method="get" action="/workbench/book" class="threshold"><div><label for="threshold">Concentration threshold <span>percent, at or above</span></label><input id="threshold" name="threshold" inputmode="decimal" maxlength="6" spellcheck="false" value="{{ book.applied_threshold_pct if book else (threshold or '10.00') }}" aria-describedby="threshold-help"></div><button type="submit" class="button">Apply threshold</button><p class="help" id="threshold-help">From 1 to 50. The platform applies it; the page only passes it on.</p></form></div>
+<div data-sensitive>
+{% if listed.error %}<div class="note n-break" role="alert"><div><strong>Book unavailable</strong><p><span class="mono">{{ listed.error.code }}</span> · {{ listed.error.message }}</p></div></div>{% endif %}
+{% if concentration %}<section class="card" aria-labelledby="concentration-title"><div class="card-head"><h2 id="concentration-title">Concentration</h2>{{ state(concentration|envelope_state) }}</div>
+{% if concentration.error %}<div class="note n-break" role="alert"><div><strong>Concentration check unavailable</strong><p><span class="mono">{{ concentration.error.code }}</span> · {{ concentration.error.message }}</p></div></div>
+{% else %}
+<div class="kpi-grid"><div class="kpi"><p class="label">Households evaluated</p><p class="kpi-value">{{ book.evaluated_household_count }}</p></div><div class="kpi"><p class="label">With a breach</p><p class="kpi-value">{{ book.breaching_household_count }}</p></div><div class="kpi"><p class="label">Indeterminate</p><p class="kpi-value">{{ book.indeterminate_household_count }}</p><p class="small muted">No percentage is shown for these</p></div><div class="kpi"><p class="label">Breaches returned</p><p class="kpi-value">{{ book.breach_metadata.item_count }}</p><p class="small muted">of {{ book.breach_metadata.total_item_count }} at or above {{ figure({'value': book.applied_threshold_pct, 'unit': 'pct'}) }}</p></div></div>
+{% if book.indeterminate %}<div class="note n-incomplete">{{ icon('incomplete') }}<div><strong>Some households have no concentration percentage on {{ concentration.valuation_date|long_date }}.</strong> An indeterminate household is missing an authoritative input or has no positive assets, so it cannot be checked against the threshold. Its fresh subtotal is shown, and it is not a total.</div></div>{% endif %}
+{% with flags = concentration.quality_flags %}{% include "partials/flags.html" %}{% endwith %}
+<h3 class="label">Breaches at or above {{ figure({'value': book.applied_threshold_pct, 'unit': 'pct'}) }}</h3>
+{% if book.breaches %}<div class="table-scroll" tabindex="0" role="region" aria-label="Concentration breaches"><table class="data"><thead><tr><th scope="col" class="num">Book rank</th><th scope="col">Household</th><th scope="col">Issuer</th><th scope="col" class="num">Issuer rank</th><th scope="col" class="num">Exposure (USD)</th><th scope="col" class="num">Concentration</th></tr></thead>
+<tbody>{% for row in book.breaches %}<tr><td class="num">{{ row.book_rank }}</td><td class="name">{% if row.household_id in names %}<a href="/workbench/household?household_id={{ row.household_id|urlencode }}">{{ names[row.household_id] }}</a>{% endif %}<span class="mono cell-note">{{ row.household_id }}</span></td><td class="name">{{ row.label }}<span class="mono cell-note">{{ row.issuer_id }}</span></td><td class="num">{{ row.issuer_rank }}</td><td class="num">{{ figure({'value': row.exposure_usd, 'unit': none}) }}</td><td class="num"><b>{{ figure({'value': row.concentration_pct, 'unit': 'pct'}) }}</b></td></tr>{% endfor %}</tbody></table></div>
+<p class="help">Operating-company issuers only, ranked by the platform (<span class="mono">{{ book.breach_metadata.ordering }}</span>). {% if book.breach_metadata.truncated %}The list is capped; the platform returns no further page.{% else %}Nothing was left out.{% endif %}</p>
+{% else %}<p class="small">No breach was returned at this threshold.</p>{% endif %}
+<h3 class="label">Indeterminate households</h3>
+{% if book.indeterminate %}<div class="table-scroll" tabindex="0" role="region" aria-label="Indeterminate households"><table class="data"><thead><tr><th scope="col">Household</th><th scope="col">Reason</th><th scope="col" class="num">Fresh subtotal (not a total, USD)</th><th scope="col" class="num">Stale components</th><th scope="col">Missing accounts</th><th scope="col">Blocking flags</th></tr></thead>
+<tbody>{% for row in book.indeterminate %}<tr><td class="name">{% if row.household_id in names %}<a href="/workbench/household?household_id={{ row.household_id|urlencode }}">{{ names[row.household_id] }}</a>{% endif %}<span class="mono cell-note">{{ row.household_id }}</span></td><td class="mono">{{ row.reason }}</td><td class="num">{{ figure({'value': row.fresh_subtotal_usd, 'unit': none}) }}</td><td class="num">{{ row.stale_component_count }}</td><td class="mono">{% for account in row.missing_account_ids %}{{ account }}{% if not loop.last %}, {% endif %}{% else %}<span class="muted">None</span>{% endfor %}</td><td class="flags">{% with flags = row.blocking_flags %}{% include "partials/flags.html" %}{% endwith %}</td></tr>{% endfor %}</tbody></table></div>
+{% else %}<p class="small">None on {{ concentration.valuation_date|long_date }}.</p>{% endif %}
+{% if concentration.source_refs %}<h3 class="label">Source records for this check</h3><ul class="source-links">{% for handle in concentration.source_refs %}<li><a href="{{ evidence_link(concentration.result_id, handle) }}" data-drawer>{{ handle }}</a></li>{% endfor %}</ul>{% endif %}
+{% endif %}
+</section>{% endif %}
+{% if not listed.error %}<section class="card" aria-labelledby="households-title"><h2 id="households-title">Households</h2>
+<p class="list-state"><span class="label">Entitled-household list</span>{{ state(listed|envelope_state) }}</p>
+{{ counts(listed.data, 'households') }}
+{% with flags = listed.quality_flags %}{% include "partials/flags.html" %}{% endwith %}
+<p class="help">One governed snapshot per household. No book figure is shown: the platform defines no metric that adds households together.</p>
+{% if rows %}<div class="table-scroll" tabindex="0" role="region" aria-label="Households"><table class="data"><thead><tr><th scope="col">Household</th><th scope="col">Status</th><th scope="col" class="num">Included accounts</th><th scope="col" class="num">Household assets (USD)</th><th scope="col">Fresh subtotal (not a total, USD)</th><th scope="col">Flags</th></tr></thead>
+<tbody>{% for item, snapshot in rows %}{% set data = snapshot.data if snapshot.error is none else none %}{% set url = evidence_link(snapshot.result_id, snapshot.source_refs[0]) if data and snapshot.source_refs else none %}<tr><td class="name"><a href="/workbench/household?household_id={{ item.household_id|urlencode }}">{{ item.household_name }}</a><span class="mono cell-note">{{ item.household_id }}</span></td><td>{{ state(snapshot|envelope_state) }}</td><td class="num">{{ data.item_count if data else '' }}</td>
+<td class="num">{% if not data %}<span class="mono">{{ snapshot.error.code }}</span>{% elif snapshot.status == 'COMPLETE' %}{% if url %}{{ figure_link({'value': data.assets_usd, 'unit': none}, url, 'Household assets for ' ~ item.household_id) }}{% else %}{{ figure({'value': data.assets_usd, 'unit': none}) }}{% endif %}{% else %}<span class="muted">Incomplete</span>{% endif %}</td>
+<td>{% if data and snapshot.status == 'INCOMPLETE' %}{% if url %}{{ figure_link({'value': data.fresh_subtotal_usd, 'unit': none}, url, 'Fresh subtotal (not a total) for ' ~ item.household_id) }}{% else %}{{ figure({'value': data.fresh_subtotal_usd, 'unit': none}) }}{% endif %}
+{% for component in data.stale_components %}<span class="small cell-note">Stale <span class="mono">{{ component.subject }}</span>, price date {{ component.price_date|long_date }}</span>{% endfor %}{% for component in data.missing_components %}<span class="small cell-note">Not received <span class="mono">{{ component }}</span></span>{% endfor %}{% endif %}</td>
+<td class="flags">{% with flags = snapshot.quality_flags %}{% include "partials/flags.html" %}{% endwith %}{% if not snapshot.quality_flags %}<span class="muted">None</span>{% endif %}</td></tr>{% endfor %}</tbody></table></div>
+{% else %}<p class="small">You are entitled to no household now.</p>{% endif %}
+</section>{% endif %}
+<details><summary>Governed result envelopes</summary>
+<h3 class="label">Entitled households</h3><pre>{{ listed|json_text }}</pre>
+{% for item, snapshot in rows %}<h3 class="label">Snapshot <span class="mono">{{ item.household_id }}</span></h3><pre>{{ snapshot|json_text }}</pre>{% endfor %}
+{% if concentration %}<h3 class="label">Concentration</h3><pre>{{ concentration|json_text }}</pre>{% endif %}
+</details>
+</div>
+{% endblock %}

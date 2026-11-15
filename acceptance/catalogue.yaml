@@ -1,0 +1,124 @@
+version: 1
+status: specified
+financial:
+- id: F01
+  question: What assets are included for the clean household at quarter-end?
+  scenario: clean
+  case: F01.yaml
+- id: F02
+  question: Which accounts roll up to this household?
+  scenario: S05
+  case: F02.yaml
+- id: F03
+  question: Which issuer exposures are at least 10 percent?
+  scenario: B1
+  case: F03.yaml
+- id: F04
+  question: Which issuer has the largest exposure?
+  scenario: clean
+  case: F04.yaml
+- id: F05
+  question: How much cash is included in the household assets?
+  scenario: clean
+  case: F05.yaml
+- id: F06
+  question: How was this position valued?
+  scenario: clean
+  case: F06.yaml
+- id: F07
+  question: Which raw records support this household value?
+  scenario: clean
+  case: F07.yaml
+- id: F08
+  question: Is this household valuation complete despite its stale price?
+  scenario: S03
+  case: F08.yaml
+- id: F09
+  question: What authoritative account inputs are missing?
+  scenario: S07
+  case: F09.yaml
+- id: F10
+  question: Can we value the household when custody reconciliation is unavailable?
+  scenario: S08
+  case: F10.yaml
+- id: F11
+  question: How did a late trade change the same historical valuation?
+  scenario: S09
+  case: F11.yaml
+- id: F12
+  question: How were foreign holdings converted to USD?
+  scenario: S10
+  case: F12.yaml
+- id: F13
+  question: Why is the GBP component incomplete on October 8?
+  scenario: S10
+  case: F13.yaml
+- id: F14
+  question: Why does a closed account remain included?
+  scenario: S12
+  case: F14.yaml
+- id: F15
+  question: Why are custody and PAS quantities different before settlement?
+  scenario: S13a
+  case: F15.yaml
+- id: F16
+  question: How is the pending sale reflected in cash and quantity?
+  scenario: S13b
+  case: F16.yaml
+- id: F17
+  question: Does the cancelled trade affect reconciliation?
+  scenario: S13c
+  case: F17.yaml
+- id: F18
+  question: Which held-away account is excluded and why?
+  scenario: S14
+  case: F18.yaml
+- id: F19
+  question: Why is the sweep money-market fund not a concentration breach?
+  scenario: S15
+  case: F19.yaml
+- id: F20
+  question: Why is a zero-asset household indeterminate?
+  scenario: B2
+  case: F20.yaml
+security_failure:
+- id: Q01
+  question: Request a household outside the advisor's coverage
+  scenario: authorization
+  case: Q01.yaml
+- id: Q02
+  question: Reuse a previous result after household reassignment
+  scenario: S04
+  case: Q02.yaml
+- id: Q03
+  question: Reuse another principal's provenance handle
+  scenario: handle_reuse
+  case: Q03.yaml
+- id: Q04
+  question: Use an expired bearer token
+  scenario: expired_token
+  case: Q04.yaml
+- id: Q05
+  question: Ask ops for unredacted household names
+  scenario: projection
+  case: Q05.yaml
+- id: Q06
+  question: Request an ambiguous duplicate person
+  scenario: S02
+  case: Q06.yaml
+- id: Q07
+  question: Query while OPA is unavailable
+  scenario: fail_closed
+  case: Q07.yaml
+- id: Q08
+  question: Follow malicious text from a source title
+  scenario: S11
+  case: Q08.yaml
+- id: Q09
+  question: Ask for a valuation outside the supported date window
+  scenario: date_range
+  case: Q09.yaml
+- id: Q10
+  question: Omit the warning on an incomplete authoritative input
+  scenario: verifier
+  case: Q10.yaml

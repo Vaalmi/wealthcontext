@@ -1,0 +1,93 @@
+version: 1
+id: Q06
+question: Request an ambiguous duplicate person
+scenario: S02
+category: security_failure
+principal:
+  id: COMP-01
+  role: compliance
+request_time: '2026-11-01T12:00:00Z'
+valuation_date: '2026-09-30'
+known_as_of: '2026-10-31T16:00:00Z'
+household_ids:
+- WC-HH-0002
+authoritative_sources:
+  membership_reporting: CRM
+  quantity_cash: PAS trade-date snapshots
+  price: Custody latest eligible EOD close
+  fx: Same-day USD conversion fix; USD identity 1
+received_records:
+- source_system: CRM
+  feed: crm
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - household-WC-HH-0002
+  - person-WC-PER-0003
+  - person-ambiguous-0003
+  observation: Household, membership and reporting assertions determine included managed accounts.
+- source_system: PAS-A
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-A accounts.
+- source_system: PAS-B
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-B accounts.
+- source_system: CUSTODY-A
+  feed: prices
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - price-WC-SEC-0003
+  observation: Received close observations; secondary PAS quotes never replace custody pricing.
+- source_system: CUSTODY-B
+  feed: prices
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - price-WC-SEC-0002
+  observation: Eligible custody-B close for the other included managed security; ambiguity blocks the
+    household total.
+missing_records: []
+requests:
+- alias: snapshot
+  tool: get_household_snapshot
+  arguments:
+    as_of: '2026-09-30'
+    known_as_of: '2026-10-31T16:00:00Z'
+    household_id: WC-HH-0002
+  status: INCOMPLETE
+  metric_refs:
+  - MV_POSITION@1
+  - CASH_USD@1
+  - HOUSEHOLD_ASSETS@1
+required_facts: []
+required_predicates:
+- request: snapshot
+  entity_type: household
+  entity_id: WC-HH-0002
+  kind: completeness
+  field: status
+  expect: INCOMPLETE
+required_caveats:
+- flag: AMBIGUOUS_ENTITY
+  subject: WC-PER-0003
+result_checks:
+- request: snapshot
+  path: data.assets_usd
+  value: null
+  comparison: absent
+required_mentions: []
+forbidden_mentions: []
+expected_refusal: null
+manual_checks:
+- Equal-priority conflicting received assertions for canonical person0003 prevent selecting either name
+  or publishing a total.
+setup: []
+limitations: []
+required_source_disclosure: false

@@ -1,0 +1,56 @@
+<svg class="dg" viewBox="-14 -14 1028 468" width="1028" height="468" role="img" aria-label="Ingestion: five feeds with manifests go through manifest check, schema validation, account-atomic quarantine, idempotent append and an atomic run commit into the canonical store; side outputs are the feed-run log, quarantine and the entitlement revision." xmlns="http://www.w3.org/2000/svg"><style>svg{--bg:#F2F4F3;--panel:#FBFCFB;--surface:#FFFFFF;--surface-2:#E9ECEB;--zone:#F4F6F5;--fg:#18202B;--fg-muted:#566070;--line:#CDD3D6;--line-strong:#7B8592;--edge:#46505E;--accent:#2756A6;--accent-soft:#E2EAF7;--ok:#1F7A4D;--ok-soft:#DFF1E7;--warn:#9C5B0E;--warn-soft:#FAEBD5;--deny:#B02A22;--deny-soft:#F8E1DF;--display:Georgia, "Times New Roman", serif;--body:"IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;--mono:ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;}
+@media (prefers-color-scheme: dark){svg{--bg:#11161C;--panel:#161C23;--surface:#1D242D;--surface-2:#252D38;--zone:#192028;--fg:#E5E9EE;--fg-muted:#9AA4B1;--line:#323B47;--line-strong:#6A7584;--edge:#A9B2BF;--accent:#8EB2F2;--accent-soft:#1D2C47;--ok:#6FCB9A;--ok-soft:#163325;--warn:#E8B062;--warn-soft:#382813;--deny:#F28B83;--deny-soft:#3B1C1A;}}
+.panel{fill:var(--panel);stroke:var(--line)}
+.dg text{font-family:var(--body)}
+.dg .tt{font-size:13px;font-weight:600;fill:var(--fg)}
+.dg .ts{font-size:11.5px;fill:var(--fg-muted)}
+.dg .lbl{font-size:11px;fill:var(--fg-muted)}
+.dg .mono{font-family:var(--mono)}
+.dg .tt.mono{font-size:12.5px}
+.dg .strong{fill:var(--fg);font-weight:600}
+.dg .big{font-family:var(--display);font-size:22px;font-weight:600;fill:var(--fg)}
+.dg .axt{fill:var(--fg);font-weight:500}
+.dg .zl{font-size:10.5px;letter-spacing:.08em;font-weight:600;fill:var(--fg-muted)}
+.dg .chipt{font-size:11.5px;font-weight:600}
+.dg .accentt{fill:var(--accent)} .dg .okt{fill:var(--ok)} .dg .warnt{fill:var(--warn)} .dg .denyt{fill:var(--deny)}
+.dg .lbg{fill:var(--panel)}
+.dg .zone{fill:var(--zone);stroke:var(--line);stroke-dasharray:5 4}
+.dg .box{fill:var(--surface);stroke:var(--line-strong);stroke-width:1.1}
+.dg .box.q{stroke-width:1.6}
+.dg .box.accent{fill:var(--accent-soft);stroke:var(--accent)}
+.dg .box.ok{fill:var(--ok-soft);stroke:var(--ok)}
+.dg .box.warn{fill:var(--warn-soft);stroke:var(--warn)}
+.dg .box.deny{fill:var(--deny-soft);stroke:var(--deny)}
+.dg .box.muted{fill:var(--surface-2);stroke:var(--line)}
+.dg .box.ghost{fill:none;stroke:var(--line-strong);stroke-dasharray:6 4}
+.dg .edge{fill:none;stroke:var(--edge);stroke-width:1.4}
+.dg .edge.accent{stroke:var(--accent)} .dg .edge.ok{stroke:var(--ok)} .dg .edge.deny{stroke:var(--deny)} .dg .edge.warn{stroke:var(--warn)}
+.dg .edge.dash{stroke-dasharray:5 4}
+.dg .edge.divider{stroke:var(--accent);stroke-dasharray:2 4;stroke-width:1.6}
+.dg .edge.guide{stroke:var(--fg-muted);stroke-dasharray:4 4;stroke-width:1.1}
+.dg .edge.guide.accent{stroke:var(--accent)}
+.dg .edge.life{stroke:var(--line-strong);stroke-dasharray:3 5;stroke-width:1}
+.dg .edge.axis{stroke:var(--fg-muted);stroke-width:1}
+.dg .head{fill:var(--edge)} .dg .head.accent{fill:var(--accent)} .dg .head.ok{fill:var(--ok)} .dg .head.deny{fill:var(--deny)} .dg .head.warn{fill:var(--warn)}
+.dg .reg0{fill:var(--surface-2)} .dg .reg1{fill:var(--surface)} .dg .reg2{fill:var(--accent-soft)}
+.dg .plotframe{fill:none;stroke:var(--line-strong)}
+.dg .dot{fill:var(--accent);stroke:var(--panel);stroke-width:2}
+.dg .bar{fill:var(--line-strong)} .dg .bar.accent{fill:var(--accent)}
+.dg .bar.pending{fill:none;stroke:var(--accent);stroke-width:1.4;stroke-dasharray:3 3}
+.dg .bar.ghost{fill:none;stroke:var(--line-strong);stroke-dasharray:5 4}
+.dg .tt14{font-size:14px;font-weight:600;fill:var(--fg)}
+.dg .bt{font-size:13.5px;fill:var(--fg)}
+.dg .bq{font-size:15.5px;font-weight:500;fill:var(--fg)}
+.dg .hl{fill:var(--accent);font-weight:700}
+.dg .person{fill:var(--line-strong)}
+.dg .bubble{fill:var(--surface);stroke:var(--line-strong);stroke-width:1.1}
+.dg .bubble.soft{fill:var(--surface-2);stroke:none}
+.dg .bubble.deny{fill:var(--deny-soft);stroke:var(--deny)}
+.dg .bubble.accent{fill:var(--accent-soft);stroke:var(--accent)}
+.dg .badge{fill:var(--deny)}
+.dg .badget{font-size:11px;font-weight:700;fill:var(--panel)}
+.dg .card{fill:var(--surface);stroke:var(--line)}
+.dg .dotc.warn{fill:var(--warn)} .dg .dotc.deny{fill:var(--deny)}
+.dg .step{fill:var(--surface);stroke:var(--line-strong);stroke-width:2}
+.dg .step.accent{fill:var(--accent-soft);stroke:var(--accent)} .dg .step.ok{fill:var(--ok-soft);stroke:var(--ok)}
+.dg .stepn{font-family:var(--display);font-size:19px;font-weight:600;fill:var(--fg)}</style><rect class="panel" x="-13.5" y="-13.5" width="1027" height="467" rx="10"/><defs><marker id="ing-base" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="head base"/></marker></defs><path class="edge " d="M 210.0 63.0 L 230.0 63.0"/><path class="edge " d="M 210.0 139.0 L 230.0 139.0"/><path class="edge " d="M 210.0 215.0 L 230.0 215.0"/><path class="edge " d="M 210.0 291.0 L 230.0 291.0"/><path class="edge " d="M 210.0 367.0 L 230.0 367.0"/><path class="edge " d="M 230.0 63.0 L 230.0 367.0"/><path class="edge " d="M 230.0 63.0 L 260.0 63.0" marker-end="url(#ing-base)"/><path class="edge " d="M 375.0 92.0 L 375.0 110.0" marker-end="url(#ing-base)"/><path class="edge " d="M 375.0 168.0 L 375.0 186.0" marker-end="url(#ing-base)"/><path class="edge " d="M 375.0 244.0 L 375.0 262.0" marker-end="url(#ing-base)"/><path class="edge " d="M 375.0 320.0 L 375.0 338.0" marker-end="url(#ing-base)"/><path class="edge " d="M 490.0 63.0 L 540.0 63.0" marker-end="url(#ing-base)"/><path class="edge " d="M 490.0 215.0 L 540.0 215.0" marker-end="url(#ing-base)"/><path class="edge " d="M 490.0 139.0 L 515.0 139.0 L 515.0 200.0 L 540.0 200.0" marker-end="url(#ing-base)"/><path class="edge " d="M 490.0 367.0 L 540.0 367.0" marker-end="url(#ing-base)"/><path class="edge " d="M 770.0 320.0 L 785.0 320.0 L 785.0 258.0 L 800.0 258.0" marker-end="url(#ing-base)"/><path class="edge " d="M 770.0 376.0 L 800.0 376.0" marker-end="url(#ing-base)"/><rect class="box " x="20" y="34" width="190" height="58" rx="7"/><text class="tt t" x="115.0" y="59.0" text-anchor="middle">Custody positions + cash</text><text class="ts" x="115.0" y="75.0" text-anchor="middle">secondary: reconciliation</text><rect class="box " x="20" y="110" width="190" height="58" rx="7"/><text class="tt t" x="115.0" y="135.0" text-anchor="middle">Custody EOD prices</text><text class="ts" x="115.0" y="151.0" text-anchor="middle">authoritative for price</text><rect class="box " x="20" y="186" width="190" height="58" rx="7"/><text class="tt t" x="115.0" y="211.0" text-anchor="middle">CRM</text><text class="ts" x="115.0" y="227.0" text-anchor="middle">people, households, coverage</text><rect class="box " x="20" y="262" width="190" height="58" rx="7"/><text class="tt t" x="115.0" y="287.0" text-anchor="middle">Portfolio accounting</text><text class="ts" x="115.0" y="303.0" text-anchor="middle">authoritative: qty, cash</text><rect class="box " x="20" y="338" width="190" height="58" rx="7"/><text class="tt t" x="115.0" y="363.0" text-anchor="middle">FX fix</text><text class="ts" x="115.0" y="379.0" text-anchor="middle">authoritative for rates</text><rect class="box " x="260" y="34" width="230" height="58" rx="7"/><text class="tt t" x="375.0" y="59.0" text-anchor="middle">1 · Manifest check</text><text class="ts" x="375.0" y="75.0" text-anchor="middle">counts, checksum, expected accounts</text><rect class="box " x="260" y="110" width="230" height="58" rx="7"/><text class="tt t" x="375.0" y="135.0" text-anchor="middle">2 · Schema validation</text><text class="ts" x="375.0" y="151.0" text-anchor="middle">typed model per feed</text><rect class="box " x="260" y="186" width="230" height="58" rx="7"/><text class="tt t" x="375.0" y="211.0" text-anchor="middle">3 · Account-atomic quarantine</text><text class="ts" x="375.0" y="227.0" text-anchor="middle">a cut-off account commits nothing</text><rect class="box " x="260" y="262" width="230" height="58" rx="7"/><text class="tt t" x="375.0" y="287.0" text-anchor="middle">4 · Idempotent append</text><text class="ts" x="375.0" y="303.0" text-anchor="middle">same file or row twice: no-op</text><rect class="box " x="260" y="338" width="230" height="58" rx="7"/><text class="tt t" x="375.0" y="363.0" text-anchor="middle">5 · Atomic run commit</text><text class="ts" x="375.0" y="379.0" text-anchor="middle">every row gets one recorded_at</text><rect class="box muted" x="540" y="34" width="230" height="72" rx="7"/><text class="tt mutedt" x="655.0" y="58.5" text-anchor="middle">Feed-run log</text><text class="ts" x="655.0" y="74.5" text-anchor="middle">SUCCESS · PARTIAL · FAILED · TIMEOUT</text><text class="ts" x="655.0" y="89.5" text-anchor="middle">status covers the whole run</text><rect class="box warn" x="540" y="186" width="230" height="58" rx="7"/><text class="tt warnt" x="655.0" y="211.0" text-anchor="middle">Quarantine</text><text class="ts" x="655.0" y="227.0" text-anchor="middle">rejected rows + reason</text><rect class="box accent" x="540" y="300" width="230" height="100" rx="7"/><text class="tt accentt" x="655.0" y="331.0" text-anchor="middle">Canonical store</text><text class="ts" x="655.0" y="347.0" text-anchor="middle">append-only versioned facts</text><text class="ts" x="655.0" y="362.0" text-anchor="middle">crosswalk · conflict register</text><text class="ts" x="655.0" y="377.0" text-anchor="middle">entitlement facts</text><rect class="box " x="800" y="222" width="180" height="72" rx="7"/><text class="tt t" x="890.0" y="246.5" text-anchor="middle">Entitlement revision +1</text><text class="ts" x="890.0" y="262.5" text-anchor="middle">same transaction,</text><text class="ts" x="890.0" y="277.5" text-anchor="middle">only if coverage changed</text><rect class="box " x="800" y="340" width="180" height="72" rx="7"/><text class="tt t" x="890.0" y="364.5" text-anchor="middle">Context service</text><text class="ts" x="890.0" y="380.5" text-anchor="middle">point-in-time reads</text><text class="ts" x="890.0" y="395.5" text-anchor="middle">by as_of + known_as_of</text><text class="zl" x="20.0" y="22.0" text-anchor="start">FIVE FEEDS FROM THE SEEDED GENERATOR, EACH WITH A MANIFEST</text></svg>

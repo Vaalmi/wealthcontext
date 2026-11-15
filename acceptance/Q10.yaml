@@ -1,0 +1,113 @@
+version: 1
+id: Q10
+question: Omit the warning on an incomplete authoritative input
+scenario: verifier
+category: security_failure
+principal:
+  id: COMP-01
+  role: compliance
+request_time: '2026-11-01T12:00:00Z'
+valuation_date: '2026-10-08'
+known_as_of: '2026-10-31T16:00:00Z'
+household_ids:
+- WC-HH-0010
+authoritative_sources:
+  membership_reporting: CRM
+  quantity_cash: PAS trade-date snapshots
+  price: Custody latest eligible EOD close
+  fx: Same-day USD conversion fix; USD identity 1
+received_records:
+- source_system: CRM
+  feed: crm
+  business_date: '2026-10-08'
+  recorded_at: '2026-10-08T22:00:00Z'
+  source_record_ids:
+  - household-WC-HH-0010
+  observation: Household, membership and reporting assertions determine included managed accounts.
+- source_system: PAS-A
+  feed: pas_snapshots
+  business_date: '2026-10-08'
+  recorded_at: '2026-10-08T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-A accounts.
+- source_system: PAS-B
+  feed: pas_snapshots
+  business_date: '2026-10-08'
+  recorded_at: '2026-10-08T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-B accounts.
+- source_system: CUSTODY-A
+  feed: prices
+  business_date: '2026-10-08'
+  recorded_at: '2026-10-08T22:00:00Z'
+  source_record_ids:
+  - price-WC-SEC-0019
+  observation: Authoritative custody CAD close for security 0019.
+- source_system: FX
+  feed: fx
+  business_date: '2026-10-08'
+  recorded_at: '2026-10-08T22:00:00Z'
+  source_record_ids:
+  - fx-USD
+  - fx-EUR
+  - fx-CAD
+  observation: The received same-day FX file contains USD/EUR/CAD fixes but omits GBP; no prior GBP fix
+    may carry forward.
+- source_system: CUSTODY-B
+  feed: prices
+  business_date: '2026-10-08'
+  recorded_at: '2026-10-08T22:00:00Z'
+  source_record_ids:
+  - price-WC-SEC-0018
+  - price-WC-SEC-0020
+  observation: Authoritative custody EUR/GBP closes for securities 0018/0020.
+missing_records:
+- No same-day GBP fix in the received FX file; prior fix cannot carry forward.
+requests:
+- alias: snapshot
+  tool: get_household_snapshot
+  arguments:
+    as_of: '2026-10-08'
+    known_as_of: '2026-10-31T16:00:00Z'
+    household_id: WC-HH-0010
+  status: INCOMPLETE
+  metric_refs:
+  - MV_POSITION@1
+  - CASH_USD@1
+  - HOUSEHOLD_ASSETS@1
+required_facts:
+- request: snapshot
+  entity_type: household
+  entity_id: WC-HH-0010
+  field: fresh_subtotal_usd
+  value: '730.00'
+  unit: USD
+  household_id: WC-HH-0010
+  valuation_date: '2026-10-08'
+  known_as_of: '2026-10-31T16:00:00Z'
+required_predicates:
+- request: snapshot
+  entity_type: household
+  entity_id: WC-HH-0010
+  kind: completeness
+  field: status
+  expect: INCOMPLETE
+required_caveats:
+- flag: FX_UNAVAILABLE
+  subject: WC-AC-0019:WC-SEC-0020
+- flag: FX_UNAVAILABLE
+  subject: WC-AC-0019:GBP
+result_checks: []
+required_mentions: []
+forbidden_mentions: []
+expected_refusal: null
+manual_checks:
+- The separate deterministic probe must actually reject an omitted-caveat candidate, accept a corrected
+  retry, and verify a fallback after another invalid retry.
+- Keep deterministic probe security evidence separate from genuine provider first-attempt and final accuracy;
+  never mutate actual provider submissions.
+setup:
+- Run a separate synthetic deterministic verifier omission/retry/fallback probe before the provider challenge;
+  never mutate or relabel actual provider output.
+limitations: []
+required_source_disclosure: false

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, badge, state, counts %}
+{# C1: one governed `decision_log_page`. The platform decides before it decodes the cursor
+   or applies a filter, fixes the browse at a commit-position watermark and returns every
+   count shown here. Entitlement facts are those stored for each cited revision, labelled
+   as that. Nothing is counted or compared on this page, and there is no export. #}
+{% block title %}Access decisions{% endblock %}
+{% block main %}
+<p class="crumb">Compliance · Access decisions</p>
+<div class="page-head"><div><h1>Access decisions</h1>
+<p class="sub">Every authorization decision the platform recorded, newest first, read through the governed <span class="mono">decision_log_page</span>. Access is decided at request time, and each decision cites the entitlement revision it used.</p></div></div>
+<form method="get" action="/workbench/decisions" class="card filters" aria-labelledby="filters-title">
+<h2 id="filters-title" class="h3">Filters</h2>
+<div class="filter-grid">
+<div><label for="f-principal">Principal</label><input id="f-principal" name="principal_id" value="{{ query.principal_id or '' }}" spellcheck="false" autocomplete="off" placeholder="ADV-03"></div>
+<div><label for="f-action">Action</label><input id="f-action" name="action" value="{{ query.action or '' }}" spellcheck="false" autocomplete="off" placeholder="snapshot"></div>
+<div><label for="f-outcome">Outcome</label><select id="f-outcome" name="outcome"><option value="">Any</option><option value="allow"{% if query.outcome == 'allow' %} selected{% endif %}>Allowed</option><option value="deny"{% if query.outcome == 'deny' %} selected{% endif %}>Denied</option></select></div>
+<div><label for="f-from">Recorded from <span>UTC, inclusive</span></label><input id="f-from" name="recorded_from" type="datetime-local" step="1" value="{{ form_instants.recorded_from }}"></div>
+<div><label for="f-before">Recorded before <span>UTC, exclusive</span></label><input id="f-before" name="recorded_before" type="datetime-local" step="1" value="{{ form_instants.recorded_before }}"></div>
+<div><label for="f-household">Household</label><input id="f-household" name="household_id" value="{{ query.household_id or '' }}" spellcheck="false" autocomplete="off" placeholder="WC-HH-0004"></div>
+</div>
+<div class="filter-actions"><button type="submit" class="button primary">Apply filters</button><a class="button ghost" href="/workbench/decisions">Clear filters</a></div>
+<p class="help">The platform applies every filter. A household matches an allowed filtered decision (search and book) through the households it authorized, and any other decision through the households it named.</p>
+</form>
+{% if page.error %}<div class="note n-break" role="alert">{{ icon('break') }}<div><strong>Decisions unavailable</strong><p><span class="mono">{{ page.error.code }}</span> · {{ page.error.message }}</p>{% if browsing and page.error.code == 'INVALID_ARGUMENT' %}<p>This page link no longer opens. A link works only for the browse and the filters it was issued with, and a browse starts again after the platform restarts.</p><p><a class="button" href="{{ first_link }}">Start the browse again</a></p>{% endif %}</div></div>
+{% elif data %}
+<section class="card" aria-labelledby="log-title"><div class="card-head"><h2 id="log-title">Decisions</h2>{{ state(page|envelope_state) }}</div>
+<p class="counts">Showing <b>{{ data.item_count }}</b> of <b>{{ data.total_item_count }}</b> matching decisions, ordered by <span class="mono">{{ data.ordering }}</span>. {% if data.next_cursor %}More follow on the next page.{% else %}This is the last page.{% endif %}</p>
+<p class="help">This browse began {{ data.browse_started_at|long_instant }}. It holds the decisions committed when its first page was read; decisions recorded later, this browse's own included, never enter it or change its count.</p>
+{% if data['items'] %}<div class="table-scroll" tabindex="0" role="region" aria-label="Decisions"><table class="data"><thead><tr><th scope="col">Recorded</th><th scope="col">Principal</th><th scope="col">Action</th><th scope="col">Outcome</th><th scope="col">Reason</th><th scope="col">Households named</th><th scope="col">Households authorized</th><th scope="col">Revision</th><th scope="col">Trace</th></tr></thead>
+<tbody>{% for item in data['items'] %}<tr><td class="when">{{ item.recorded_at|long_instant }}</td><td class="mono">{{ item.principal_id or 'None' }}</td><td class="mono">{{ item.action }}</td><td>{% if item.allowed %}{{ badge('complete', 'Allowed') }}{% else %}{{ badge('denied', 'Denied') }}{% endif %}</td><td class="mono">{{ item.reason }}</td><td class="mono ids">{% for resource in item.resources %}{{ resource }}{% if not loop.last %}, {% endif %}{% else %}<span class="muted">None</span>{% endfor %}</td><td class="mono ids">{% if item.authorized_resources is none %}<span class="muted">Not an allow</span>{% else %}{% for resource in item.authorized_resources %}{{ resource }}{% if not loop.last %}, {% endif %}{% else %}<span class="muted">None</span>{% endfor %}{% endif %}</td><td class="mono">{{ item.entitlement_revision if item.entitlement_revision is not none else 'None' }}</td><td class="ids"><a class="mono" href="{{ trace_link(item.trace_id) }}">{{ item.trace_id }}</a></td></tr>{% endfor %}</tbody></table></div>
+{% else %}<p class="small">No decision matches these filters.</p>{% endif %}
+{% if browsing or next_link %}<nav class="pager" aria-label="Decision pages">{% if browsing %}<a class="button ghost" href="{{ first_link }}">First page, new browse</a>{% endif %}{% if next_link %}<a class="button" href="{{ next_link }}">Next page {{ icon('arrow') }}</a>{% endif %}</nav>{% endif %}
+</section>
+<section class="card" aria-labelledby="facts-title"><h2 id="facts-title">Entitlement facts on this page</h2>
+<p class="help">Labelled <span class="mono">FACTS_AT_STORED_REVISION</span>: the grants stored for the revision each decision cites. They are not the full input the policy saw, which also held the principal, the action, the households and the request's business date.</p>
+<p class="counts">The decisions on this page cite <b>{{ data.revision_count }}</b> entitlement revisions.</p>
+{% for revision in data.revisions %}<h3 class="label">Revision {{ revision.revision }} · stored {{ revision.recorded_at|long_instant }} · <span class="mono">{{ revision.label }}</span></h3>
+{% if revision.facts %}<div class="table-scroll" tabindex="0" role="region" aria-label="Facts at revision {{ revision.revision }}"><table class="data"><thead><tr><th scope="col">Kind</th><th scope="col">Subject</th><th scope="col">Object</th><th scope="col">Valid from</th><th scope="col">Valid to</th></tr></thead>
+<tbody>{% for fact in revision.facts %}<tr><td class="mono">{{ fact.kind }}</td><td class="mono">{{ fact.subject }}</td><td class="mono">{{ fact.object }}</td><td>{{ fact.valid_from|long_date }}</td><td>{{ fact.valid_to|long_date }}</td></tr>{% endfor %}</tbody></table></div>
+{% else %}<p class="small">No grant is stored for this revision.</p>{% endif %}
+{{ counts(revision, 'facts at this revision') }}
+{% endfor %}
+</section>
+{% endif %}
+<details><summary>Governed result envelope</summary><pre>{{ page|json_text }}</pre></details>
+{% endblock %}

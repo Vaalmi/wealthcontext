@@ -1,0 +1,7 @@
+{
+  "id": "HAND-USD",
+  "description": "100 shares at USD 25 plus USD 500 cash: 2500 + 500 = 3000",
+  "positions": [{"quantity": "100", "price": "25.00", "fx_to_usd": "1"}],
+  "cash": [{"amount": "500.00", "fx_to_usd": "1"}],
+  "expected_assets_usd": "3000.00"
+}

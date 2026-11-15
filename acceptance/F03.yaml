@@ -1,0 +1,111 @@
+version: 1
+id: F03
+question: Which issuer exposures are at least 10 percent?
+scenario: B1
+category: financial
+principal:
+  id: COMP-01
+  role: compliance
+request_time: '2026-11-01T12:00:00Z'
+valuation_date: '2026-09-30'
+known_as_of: '2026-10-31T16:00:00Z'
+household_ids:
+- WC-HH-0014
+authoritative_sources:
+  membership_reporting: CRM
+  quantity_cash: PAS trade-date snapshots
+  price: Custody latest eligible EOD close
+  fx: Same-day USD conversion fix; USD identity 1
+received_records:
+- source_system: CRM
+  feed: crm
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - household-WC-HH-0014
+  observation: Household, membership and reporting assertions determine included managed accounts.
+- source_system: PAS-A
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-A accounts.
+- source_system: PAS-B
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-B accounts.
+- source_system: CUSTODY-A
+  feed: prices
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Received close observations; secondary PAS quotes never replace custody pricing.
+missing_records: []
+requests:
+- alias: book
+  tool: get_concentrated_positions
+  arguments:
+    as_of: '2026-09-30'
+    known_as_of: '2026-10-31T16:00:00Z'
+    household_id: WC-HH-0014
+    threshold_pct: '10.00'
+  status: COMPLETE
+  metric_refs:
+  - MV_POSITION@1
+  - CASH_USD@1
+  - HOUSEHOLD_ASSETS@1
+  - ISSUER_EXPOSURE@1
+  - CONCENTRATION@1
+required_facts:
+- request: book
+  entity_type: issuer
+  entity_id: WC-ISS-0001
+  field: concentration_pct
+  value: '10.00'
+  unit: pct
+  household_id: WC-HH-0014
+  valuation_date: '2026-09-30'
+  known_as_of: '2026-10-31T16:00:00Z'
+- request: book
+  entity_type: result_summary
+  entity_id: $book.result_id
+  field: applied_threshold_pct
+  value: '10.00'
+  unit: pct
+  household_id: null
+  valuation_date: '2026-09-30'
+  known_as_of: '2026-10-31T16:00:00Z'
+required_predicates:
+- request: book
+  entity_type: issuer
+  entity_id: WC-ISS-0001
+  kind: threshold
+  field: applied_threshold_pct
+  expect: AT_OR_ABOVE
+required_caveats: []
+result_checks:
+- request: book
+  path: quality_flags.*
+  value:
+    code: HELD_AWAY_EXCLUDED
+    subject: WC-AC-0031
+    severity: info
+  comparison: matches
+- request: book
+  path: quality_flags.*
+  value:
+    code: HELD_AWAY_EXCLUDED
+    subject: WC-AC-0032
+    severity: info
+  comparison: matches
+required_mentions: []
+forbidden_mentions: []
+expected_refusal: null
+manual_checks:
+- Stock USD100 / household assets USD1000 = exactly 10%; >= includes equality. Cash USD750 and MMF USD150
+  remain in denominator.
+setup: []
+limitations: []
+required_source_disclosure: false

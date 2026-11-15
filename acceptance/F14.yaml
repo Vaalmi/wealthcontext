@@ -1,0 +1,96 @@
+version: 1
+id: F14
+question: Why does a closed account remain included?
+scenario: S12
+category: financial
+principal:
+  id: COMP-01
+  role: compliance
+request_time: '2026-11-01T12:00:00Z'
+valuation_date: '2026-09-30'
+known_as_of: '2026-10-31T16:00:00Z'
+household_ids:
+- WC-HH-0012
+authoritative_sources:
+  membership_reporting: CRM
+  quantity_cash: PAS trade-date snapshots
+  price: Custody latest eligible EOD close
+  fx: Same-day USD conversion fix; USD identity 1
+received_records:
+- source_system: CRM
+  feed: crm
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - household-WC-HH-0012
+  observation: Household, membership and reporting assertions determine included managed accounts.
+- source_system: PAS-A
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-A accounts.
+- source_system: PAS-B
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-B accounts.
+- source_system: CUSTODY-B
+  feed: prices
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - price-WC-SEC-0006
+  - price-WC-SEC-0016
+  observation: Authoritative custody closes for included securities 0006/0016.
+- source_system: CUSTODY-A
+  feed: custody_accounts
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - ownership-WC-AC-0023
+  observation: Custody registration marks account 0023 CLOSED despite its remaining received positions
+    and cash.
+missing_records: []
+requests:
+- alias: snapshot
+  tool: get_household_snapshot
+  arguments:
+    as_of: '2026-09-30'
+    known_as_of: '2026-10-31T16:00:00Z'
+    household_id: WC-HH-0012
+  status: COMPLETE
+  metric_refs:
+  - MV_POSITION@1
+  - CASH_USD@1
+  - HOUSEHOLD_ASSETS@1
+required_facts:
+- request: snapshot
+  entity_type: position
+  entity_id: WC-AC-0023:WC-SEC-0006
+  field: market_value_usd
+  value: '1860.00'
+  unit: USD
+  household_id: WC-HH-0012
+  valuation_date: '2026-09-30'
+  known_as_of: '2026-10-31T16:00:00Z'
+required_predicates: []
+required_caveats:
+- flag: CLOSED_ACCOUNT_WITH_BALANCE
+  subject: WC-AC-0023
+result_checks:
+- request: snapshot
+  path: data.accounts.*.status
+  value: CLOSED
+  comparison: equals
+required_mentions:
+- WC-AC-0023
+forbidden_mentions: []
+expected_refusal: null
+manual_checks:
+- Closed account0023 still has60×USD31=USD1860 and USD1000 cash; include residual balances. Its optional
+  PAS quote32 disagrees by1, custody31 remains authoritative.
+setup: []
+limitations: []
+required_source_disclosure: false

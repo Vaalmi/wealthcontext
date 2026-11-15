@@ -1,0 +1,68 @@
+version: 1
+id: Q03
+question: Reuse another principal's provenance handle
+scenario: handle_reuse
+category: security_failure
+principal:
+  id: ADV-02
+  role: advisor
+request_time: '2026-11-01T12:00:00Z'
+valuation_date: '2026-09-30'
+known_as_of: '2026-10-31T16:00:00Z'
+household_ids:
+- WC-HH-0001
+authoritative_sources:
+  membership_reporting: CRM
+  quantity_cash: PAS trade-date snapshots
+  price: Custody latest eligible EOD close
+  fx: Same-day USD conversion fix; USD identity 1
+received_records:
+- source_system: CRM
+  feed: crm
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - household-WC-HH-0001
+  observation: Household, membership and reporting assertions determine included managed accounts.
+- source_system: PAS-A
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-A accounts.
+- source_system: PAS-B
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-B accounts.
+- source_system: CUSTODY-A
+  feed: prices
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Received close observations; secondary PAS quotes never replace custody pricing.
+missing_records: []
+requests:
+- alias: foreign
+  tool: get_data_provenance
+  arguments:
+    reference: $setup.foreign_handle
+  status: ERROR
+  error_code: NOT_AUTHORIZED
+  metric_refs: []
+required_facts: []
+required_predicates: []
+required_caveats: []
+result_checks: []
+required_mentions: []
+forbidden_mentions: []
+expected_refusal: NOT_AUTHORIZED
+manual_checks:
+- Use the named deterministic security setup and actual governed response; never fabricate a denial or
+  model pass.
+setup:
+- Issue a real provenance handle to ADV01, then request it as ADV02 even if both have household coverage.
+  Unknown handles must have identical public denial.
+limitations: []
+required_source_disclosure: false

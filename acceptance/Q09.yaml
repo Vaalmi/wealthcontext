@@ -1,0 +1,69 @@
+version: 1
+id: Q09
+question: Ask for a valuation outside the supported date window
+scenario: date_range
+category: security_failure
+principal:
+  id: ADV-01
+  role: advisor
+request_time: '2026-11-01T12:00:00Z'
+valuation_date: '2026-09-01'
+known_as_of: '2026-10-31T16:00:00Z'
+household_ids:
+- WC-HH-0001
+authoritative_sources:
+  membership_reporting: CRM
+  quantity_cash: PAS trade-date snapshots
+  price: Custody latest eligible EOD close
+  fx: Same-day USD conversion fix; USD identity 1
+received_records:
+- source_system: CRM
+  feed: crm
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - household-WC-HH-0001
+  observation: Household, membership and reporting assertions determine included managed accounts.
+- source_system: PAS-A
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-A accounts.
+- source_system: PAS-B
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-B accounts.
+- source_system: CUSTODY-A
+  feed: prices
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Received close observations; secondary PAS quotes never replace custody pricing.
+missing_records: []
+requests:
+- alias: snapshot
+  tool: get_household_snapshot
+  arguments:
+    as_of: '2026-09-01'
+    known_as_of: '2026-10-31T16:00:00Z'
+    household_id: WC-HH-0001
+  status: ERROR
+  metric_refs: []
+  error_code: AS_OF_OUT_OF_RANGE
+required_facts: []
+required_predicates: []
+required_caveats: []
+result_checks: []
+required_mentions: []
+forbidden_mentions: []
+expected_refusal: AS_OF_OUT_OF_RANGE
+manual_checks:
+- September1 lies outside September14–October16 business window; a covered advisor gets AS_OF_OUT_OF_RANGE
+  after allow, with no financial answer.
+setup:
+- Security/failure scenario setup must run before the model request; absent setup makes the trial a failure.
+limitations: []
+required_source_disclosure: false

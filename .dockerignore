@@ -1,0 +1,17 @@
+.git
+.venv
+node_modules
+review
+.agents
+runtime
+build
+__pycache__
+.pytest_cache
+.ruff_cache
+.env
+.env.*
+*.pem
+*.key
+output
+.playwright-cli
+dist

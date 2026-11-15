@@ -1,0 +1,45 @@
+{
+  "$id": "https://wealthcontext.example/schemas/v1/exposure-arguments.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "as_of": {
+      "format": "date",
+      "title": "As Of",
+      "type": "string"
+    },
+    "group_by": {
+      "default": "issuer",
+      "enum": [
+        "issuer",
+        "security"
+      ],
+      "title": "Group By",
+      "type": "string"
+    },
+    "household_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+      "title": "Household Id",
+      "type": "string"
+    },
+    "known_as_of": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Known As Of"
+    }
+  },
+  "required": [
+    "household_id",
+    "as_of"
+  ],
+  "title": "ExposureArguments",
+  "type": "object"
+}

@@ -1,0 +1,24 @@
+{# X1: the one context form. Nothing changes until it is applied; applying replaces the session. #}
+<dialog id="context-dialog" class="dialog" aria-labelledby="ctx-title">
+<form action="/workbench/session" method="post" id="context-form">
+<h2 id="ctx-title">Request context</h2>
+<p class="small">Who is asking, for which date, and what the platform had received by when.</p>
+<input type="hidden" name="csrf" value="{{ session.csrf }}"><input type="hidden" name="preset" value="{{ context.preset }}">
+<label for="persona">Persona <span>synthetic identity</span></label>
+<select name="persona" id="persona">{% for id, persona_role in personas.items() %}<option value="{{ id }}"{% if context.persona == id %} selected{% endif %}>{{ id }} · {{ role_labels[persona_role] }}</option>{% endfor %}</select>
+<label for="as-of">Valuation date</label>
+<input id="as-of" name="as_of" type="date" value="{{ context.as_of }}" required>
+<label for="known-as-of">Known as of <span>UTC instant</span></label>
+<input id="known-as-of" name="known_as_of" value="{{ known_as_of }}" required spellcheck="false" aria-describedby="known-help">
+<p class="help" id="known-help">A past cutoff shows what the platform had received then. Pages label it “History”.</p>
+<label for="household">Household <span>opened by the household page and the inspectors</span></label>
+<input id="household" name="household_id" value="{{ context.household_id }}" required spellcheck="false">
+<label for="mode">Answers</label>
+<select id="mode" name="mode"><option value="replay"{% if context.mode == 'replay' %} selected{% endif %}>Recorded replay · no API key</option><option value="live"{% if context.mode == 'live' %} selected{% endif %}>Live verified harness</option></select>
+<label for="provider">Provider</label>
+<select id="provider" name="provider" aria-describedby="provider-help">{% for provider in providers %}<option value="{{ provider.id }}"{% if context.provider == provider.id %} selected{% endif %}>{{ provider.label }} · {{ 'configured' if provider.available else 'no key' }}</option>{% endfor %}</select>
+<p class="help" id="provider-help">Provider availability reads configuration only. Keys are never sent to this page.</p>
+<p class="note n-incomplete">Applying starts a fresh view: the conversation, open evidence and selections are cleared on the server, and nothing from the old context can be shown again.</p>
+<div class="dialog-actions"><button type="button" class="button" data-close-context>Cancel</button><button type="submit" class="button primary">Apply and start a fresh view</button></div>
+</form>
+</dialog>

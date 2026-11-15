@@ -1,0 +1,37 @@
+{
+  "$id": "https://wealthcontext.example/schemas/v1/feed-health-arguments.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Business dates, inclusive; each resolves as `as_of` does and must lie in the window.",
+  "properties": {
+    "date_from": {
+      "format": "date",
+      "title": "Date From",
+      "type": "string"
+    },
+    "date_to": {
+      "format": "date",
+      "title": "Date To",
+      "type": "string"
+    },
+    "known_as_of": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Known As Of"
+    }
+  },
+  "required": [
+    "date_from",
+    "date_to"
+  ],
+  "title": "FeedHealthArguments",
+  "type": "object"
+}

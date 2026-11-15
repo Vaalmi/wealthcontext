@@ -1,0 +1,794 @@
+version: 1
+roles:
+- advisor
+- ops
+- compliance
+- engineer
+notes:
+- OPA precedes existence lookup. Advisor coverage is direct or via current team; current
+  grants apply to historical queries.
+- Ops decisions except metric definitions use no_pii, including their quality provenance
+  and conversation context.
+- Trace payload metadata is own-principal only except compliance; engineer trace/conversation
+  scope must be empty.
+- Bootstrap/control metadata contains no private business facts and does not create
+  tool result evidence. Each dispatched business operation is durably audited.
+- Filtered candidate actions become exact all-scope checks when recorded results or
+  handles are redisclosed.
+- Live chat checks conversation ownership and current policy before provider construction;
+  each data tool and terminal answer is independently governed. History is a freshly
+  authorized display projection, never the stored provider transcript.
+- A page-route row may carry a menu field (label, group, roles). It decides only which
+  roles' navigation lists the page; its roles must be allowed by the row's action, and
+  policy still decides every request. The workbench derives its public and authenticated
+  path sets from the /workbench rows here.
+- trace_spans (ADR 0009 section 7) is the trace's only owner or compliance, over every
+  household of the trace's validated results; engineers and operations are refused at its
+  preflight. The accepted trace_scope rule is unchanged (build plan decision 13).
+- General answer verification is allowed only over own-conversation results after
+  each originating action and projection reauthorizes; the scripted financial demo
+  additionally requires snapshot access.
+actions:
+  snapshot:
+    resource_kind: household
+    mode: exact
+    roles: &id001
+      advisor: full
+      compliance: full
+    advisor_requires_coverage: true
+    empty_scope_allowed: false
+    household_count: 1
+  portfolio_exposure:
+    resource_kind: household
+    mode: exact
+    roles: *id001
+    advisor_requires_coverage: true
+    empty_scope_allowed: false
+    household_count: 1
+  concentrated_positions:
+    resource_kind: household
+    mode: exact
+    roles: *id001
+    advisor_requires_coverage: true
+    empty_scope_allowed: true
+  verify_claim:
+    resource_kind: household
+    mode: exact
+    roles:
+      advisor: full
+      compliance: full
+      ops: no_pii
+      engineer: full
+    advisor_requires_coverage: true
+    empty_scope_allowed: true
+    engineer_empty_scope_only: true
+    requires_original_result_authorization: true
+  concentration_book:
+    resource_kind: household
+    mode: filter
+    roles: *id001
+    advisor_requires_coverage: true
+    empty_scope_allowed: true
+  search_households:
+    resource_kind: household
+    mode: exact_or_filter
+    roles: *id001
+    advisor_requires_coverage: true
+    empty_scope_allowed: true
+  view_quality:
+    resource_kind: household_or_global
+    mode: exact
+    roles: &id002
+      ops: no_pii
+      compliance: full
+    advisor_requires_coverage: false
+    empty_scope_allowed: true
+  feed_runs:
+    resource_kind: household_or_global
+    mode: exact
+    roles: *id002
+    advisor_requires_coverage: false
+    empty_scope_allowed: true
+  view_conflicts:
+    resource_kind: household
+    mode: exact
+    roles: &id003
+      advisor: full
+      compliance: full
+      ops: no_pii
+    advisor_requires_coverage: true
+    empty_scope_allowed: false
+    household_count: 1
+  provenance:
+    resource_kind: household
+    mode: exact
+    roles: *id003
+    advisor_requires_coverage: true
+    empty_scope_allowed: true
+  view_decision_log:
+    resource_kind: global
+    mode: exact
+    roles: &id004
+      compliance: full
+    advisor_requires_coverage: false
+    empty_scope_allowed: true
+  view_eval_reports:
+    resource_kind: global
+    mode: exact
+    roles: *id004
+    advisor_requires_coverage: false
+    empty_scope_allowed: true
+  trace_scope:
+    resource_kind: household
+    mode: exact
+    roles: &id005
+      advisor: full
+      compliance: full
+      ops: no_pii
+      engineer: full
+    advisor_requires_coverage: true
+    empty_scope_allowed: true
+    engineer_empty_scope_only: true
+  conversation_context:
+    resource_kind: household
+    mode: exact
+    roles: *id005
+    advisor_requires_coverage: true
+    empty_scope_allowed: true
+    engineer_empty_scope_only: true
+  metric_definition:
+    resource_kind: metadata
+    mode: exact
+    roles:
+      advisor: full
+      ops: full
+      compliance: full
+      engineer: full
+    advisor_requires_coverage: false
+    empty_scope_allowed: true
+  result_preflight:
+    resource_kind: metadata
+    mode: exact
+    roles: &id006
+      advisor: full
+      ops: no_pii
+      compliance: full
+      engineer: full
+    advisor_requires_coverage: false
+    empty_scope_allowed: true
+  conversation_preflight:
+    resource_kind: metadata
+    mode: exact
+    roles: *id006
+    advisor_requires_coverage: false
+    empty_scope_allowed: true
+  trace_preflight:
+    resource_kind: metadata
+    mode: exact
+    roles: *id006
+    advisor_requires_coverage: false
+    empty_scope_allowed: true
+  concentration_book_preflight:
+    resource_kind: metadata
+    mode: exact
+    roles: *id001
+    advisor_requires_coverage: false
+    empty_scope_allowed: true
+  search_preflight:
+    resource_kind: metadata
+    mode: exact
+    roles: *id001
+    advisor_requires_coverage: false
+    empty_scope_allowed: true
+  quality_preflight:
+    resource_kind: metadata
+    mode: exact
+    roles: *id002
+    advisor_requires_coverage: false
+    empty_scope_allowed: true
+  provenance_preflight:
+    resource_kind: metadata
+    mode: exact
+    roles: *id003
+    advisor_requires_coverage: false
+    empty_scope_allowed: true
+  household_receipts_preflight:
+    resource_kind: metadata
+    mode: exact
+    roles: *id004
+    advisor_requires_coverage: false
+    empty_scope_allowed: true
+  household_receipts:
+    resource_kind: household
+    mode: exact
+    roles: *id004
+    advisor_requires_coverage: false
+    empty_scope_allowed: false
+    household_count: 1
+  trace_spans_preflight:
+    resource_kind: metadata
+    mode: exact
+    roles: *id001
+    advisor_requires_coverage: false
+    empty_scope_allowed: true
+  trace_spans:
+    resource_kind: household
+    mode: exact
+    roles: *id001
+    advisor_requires_coverage: true
+    empty_scope_allowed: true
+  error_result:
+    resource_kind: metadata
+    mode: exact
+    roles:
+      advisor: full
+      ops: no_pii
+      compliance: full
+      engineer: full
+    advisor_requires_coverage: false
+    empty_scope_allowed: true
+    empty_scope_required: true
+    owner_and_conversation_required: true
+routes:
+- method: POST
+  path: /api/get_household_snapshot
+  action: snapshot
+  authentication: required
+  business: true
+  kind: business
+  tool: get_household_snapshot
+- method: POST
+  path: /api/get_portfolio_exposure
+  action: portfolio_exposure
+  authentication: required
+  business: true
+  kind: business
+  tool: get_portfolio_exposure
+- method: POST
+  path: /api/get_concentrated_positions
+  action: concentrated_positions
+  authentication: required
+  business: true
+  kind: business
+  tool: get_concentrated_positions
+- method: POST
+  path: /api/get_data_provenance
+  action: provenance
+  authentication: required
+  business: true
+  kind: business
+  tool: get_data_provenance
+- method: POST
+  path: /api/search_households
+  action: search_households
+  authentication: required
+  business: true
+  kind: business
+  tool: search_households
+- method: POST
+  path: /api/list_households
+  action: search_households
+  authentication: required
+  business: true
+  kind: business
+  tool: list_households
+  note: Workbench REST only, never an MCP tool (ADR 0009 section 1). search_preflight on the empty scope, then search_households in filter mode over the identifier-only inventory; names load for authorized IDs only.
+- method: POST
+  path: /api/get_metric_definition
+  action: metric_definition
+  authentication: required
+  business: true
+  kind: business
+  tool: get_metric_definition
+- method: POST
+  path: /api/get_data_quality_report
+  action: view_quality
+  authentication: required
+  business: true
+  kind: business
+  tool: get_data_quality_report
+- method: POST
+  path: /api/feed_runs
+  action: feed_runs
+  authentication: required
+  business: true
+  kind: business
+  tool: feed_runs
+- method: POST
+  path: /api/conflicts
+  action: view_conflicts
+  authentication: required
+  business: true
+  kind: business
+  tool: conflicts
+- method: POST
+  path: /api/decision_log
+  action: view_decision_log
+  authentication: required
+  business: true
+  kind: business
+  tool: decision_log
+- method: POST
+  path: /api/eval_reports
+  action: view_eval_reports
+  authentication: required
+  business: true
+  kind: business
+  tool: eval_reports
+- method: POST
+  path: /api/trace
+  action: trace_scope
+  authentication: required
+  business: true
+  kind: business
+  tool: trace
+- method: POST
+  path: /api/decision_log_page
+  action: view_decision_log
+  authentication: required
+  business: true
+  kind: business
+  tool: decision_log_page
+  note: Workbench REST only, never an MCP tool (ADR 0009 section 5). view_decision_log on the empty scope before the cursor is decoded or any filter applied; a browse is fixed at a commit-position watermark; the cursor is sealed with a key held only by the running application.
+- method: POST
+  path: /api/household_receipts
+  action: household_receipts
+  authentication: required
+  business: true
+  kind: business
+  tool: household_receipts
+  note: Workbench REST only, never an MCP tool (ADR 0009 section 6). household_receipts_preflight on the empty scope, then household_receipts on the one household, then the cutoffs and the snapshot's own resolution; cited records grouped by the feed run that first delivered each.
+- method: POST
+  path: /api/trace_spans
+  action: trace_spans
+  authentication: required
+  business: true
+  kind: business
+  tool: trace_spans
+  note: Workbench REST only, never an MCP tool (ADR 0009 section 7). trace_spans_preflight on the empty scope; the trace's owner and recorded evidence validated as trace validates them; trace_spans over every household of its validated results; only then is the span export opened. Allowlisted span fields only.
+- method: POST
+  path: /api/feed_health
+  action: feed_runs
+  authentication: required
+  business: true
+  kind: business
+  tool: feed_health
+  note: Workbench REST only, never an MCP tool (ADR 0009 section 3). feed_runs on the empty scope before either date is resolved; then feed_runs exactly over every household active on any day of the range at the cutoff. One cell per expected source-and-feed pair (the closed table of the fifteen FEED_SOURCES pairs) per business day, NOT_RECEIVED included, at most 375; identifiers, codes, counts and timestamps only.
+- method: POST
+  path: /api/feed_run_impact
+  action: feed_runs
+  authentication: required
+  business: true
+  kind: business
+  tool: feed_run_impact
+  note: Workbench REST only, never an MCP tool (ADR 0009 section 4). feed_runs on the empty scope before the run is looked up; an unknown run and one recorded after the cutoff are the same NOT_FOUND; then feed_runs exactly over the households active on the run's business date. Expected accounts from the run's manifest; stored reason codes; households attributed at query time; null counts for feeds without per-account availability. IDs only.
+- method: POST
+  path: /api/harness/one-claim
+  action: snapshot
+  authentication: required
+  business: true
+  kind: business
+  tool: submit_answer
+- method: POST
+  path: /api/harness/answer
+  action: conversation_context
+  authentication: required
+  business: true
+  kind: business
+  tool: harness_answer
+- method: POST
+  path: /api/harness/history
+  action: conversation_context
+  authentication: required
+  business: true
+  kind: business
+  tool: conversation_history
+- method: GET
+  path: /health
+  action: operational_metadata
+  authentication: public
+  business: false
+  kind: bootstrap_metadata
+- method: GET
+  path: /
+  action: operational_metadata
+  authentication: public
+  business: false
+  kind: bootstrap_metadata
+- method: GET
+  path: /docs
+  action: authenticated_metadata
+  authentication: required
+  business: false
+  kind: bootstrap_metadata
+- method: GET
+  path: /docs/oauth2-redirect
+  action: authenticated_metadata
+  authentication: required
+  business: false
+  kind: bootstrap_metadata
+- method: GET
+  path: /redoc
+  action: authenticated_metadata
+  authentication: required
+  business: false
+  kind: bootstrap_metadata
+- method: GET
+  path: /openapi.json
+  action: authenticated_metadata
+  authentication: required
+  business: false
+  kind: bootstrap_metadata
+- method: POST
+  path: /mcp
+  action: per_protocol_method
+  authentication: required
+  business: false
+  kind: control
+- method: GET
+  path: /mcp
+  action: per_protocol_method
+  authentication: required
+  business: false
+  kind: control
+- method: DELETE
+  path: /mcp
+  action: per_protocol_method
+  authentication: required
+  business: false
+  kind: control
+- method: MCP
+  path: initialize
+  action: authenticated_metadata
+  authentication: required
+  business: false
+  kind: bootstrap_metadata
+- method: MCP
+  path: server/discover
+  action: authenticated_metadata
+  authentication: required
+  business: false
+  kind: bootstrap_metadata
+- method: MCP
+  path: tools/list
+  action: authenticated_metadata
+  authentication: required
+  business: false
+  kind: bootstrap_metadata
+- method: MCP
+  path: resources/list
+  action: authenticated_metadata
+  authentication: required
+  business: false
+  kind: bootstrap_metadata
+- method: MCP
+  path: prompts/list
+  action: authenticated_metadata
+  authentication: required
+  business: false
+  kind: bootstrap_metadata
+- method: MCP
+  path: prompts/get
+  action: authenticated_metadata
+  authentication: required
+  business: false
+  kind: bootstrap_metadata
+- method: MCP
+  path: ping
+  action: authenticated_metadata
+  authentication: required
+  business: false
+  kind: bootstrap_metadata
+- method: MCP
+  path: notifications/initialized
+  action: authenticated_metadata
+  authentication: required
+  business: false
+  kind: bootstrap_metadata
+- method: MCP
+  path: tools/call
+  action: per_tool
+  authentication: required
+  business: false
+  kind: control
+- method: MCP
+  path: resources/read:wealthcontext://metrics/catalog
+  action: metric_definition
+  authentication: required
+  business: true
+  kind: business
+  tool: get_metric_definition
+- method: POST
+  path: /workbench/session
+  action: loopback_demo_session
+  authentication: public
+  business: false
+  kind: control
+  note: Known synthetic personas only; loopback Host, exact Origin and synchronizer CSRF required.
+- method: GET
+  path: /workbench/assets/workbench.css
+  action: operational_metadata
+  authentication: public
+  business: false
+  kind: bootstrap_metadata
+- method: GET
+  path: /workbench/assets/workbench.js
+  action: operational_metadata
+  authentication: public
+  business: false
+  kind: bootstrap_metadata
+- method: GET
+  path: /workbench/metrics
+  action: metric_definition
+  authentication: required
+  business: true
+  kind: business
+  note: E1. The governed metric catalog, then the governed get_metric_definition of one metric (the first the catalog lists, or the query's metric_id, whose shape alone is checked first). Definitions only; no household, figure, trace or span. A refusal is the neutral denial page, the same for any metric asked for.
+  menu:
+    label: Metrics
+    group: Contracts
+    roles: [engineer]
+- method: GET
+  path: /workbench/contracts
+  action: metric_definition
+  authentication: required
+  business: true
+  kind: business
+  note: E2. The exported JSON Schemas under schemas/v1 and the MCP tools, resource and prompt as tools/list, resources/list and prompts/list publish them. A metadata action open to all four roles (build plan, "New contracts and matrix changes"); the governed catalog read is taken first, and no schema_id is looked up before it allows. A refusal is the neutral denial page, the same for any schema asked for.
+  menu:
+    label: Tools and schemas
+    group: Contracts
+    roles: [engineer]
+- method: GET
+  path: /workbench/book
+  action: search_households
+  authentication: required
+  business: true
+  kind: business
+  note: A1 and A1b. list_households, then one get_household_snapshot per listed household at the session's cutoffs, then book concentration; each independently governed. No book total. A refusal of list_households is the neutral denial page.
+  menu:
+    label: My book
+    group: Workspace
+    roles: [advisor]
+- method: GET
+  path: /workbench/household
+  action: snapshot
+  authentication: required
+  business: true
+  kind: business
+  note: A2 and A4. One governed get_household_snapshot at the session's cutoffs; the household comes from the query or the session context, and only its shape is checked before the call. A refusal is the A5 neutral denial page, the same for an existing and an unknown household.
+  menu:
+    label: Household
+    group: Workspace
+    roles: [advisor]
+- method: GET
+  path: /workbench/household/reconciliation
+  action: snapshot
+  authentication: required
+  business: true
+  kind: business
+  note: A6, a tab of the household page with no menu entry of its own. Reads the reconciliation the same governed snapshot returns; refusals as on /workbench/household.
+- method: GET
+  path: /workbench/household/exposure
+  action: portfolio_exposure
+  authentication: required
+  business: true
+  kind: business
+  note: A2's exposure tab, with no menu entry of its own. One governed get_portfolio_exposure (by issuer) at the session's cutoffs; refusals as on /workbench/household.
+- method: GET
+  path: /workbench/decisions
+  action: view_decision_log
+  authentication: required
+  business: true
+  kind: business
+  note: C1. One governed decision_log_page; the filters and cursor pass to the platform unread, which decides on the empty scope before it decodes the cursor or applies a filter. Entitlement facts are those at the stored revision, labelled FACTS_AT_STORED_REVISION. A refusal is the neutral denial page. No export control (ADR 0009 point 5).
+  menu:
+    label: Access decisions
+    group: Compliance
+    roles: [compliance]
+- method: GET
+  path: /workbench/point-in-time
+  action: household_receipts
+  authentication: required
+  business: true
+  kind: business
+  note: C2. For the session's cutoff and the page's comparison cutoff (a page parameter, never session context), one governed household_receipts and one governed get_household_snapshot each; the receipts call comes first, and a refusal is the neutral denial page before any snapshot is read. The two receipts lists are compared by run ID only; no figure is differenced.
+  menu:
+    label: Point in time
+    group: Compliance
+    roles: [compliance]
+- method: GET
+  path: /workbench/trace
+  action: trace_spans
+  authentication: required
+  business: true
+  kind: business
+  note: C3. One governed trace_spans for the query's trace, then today's trace metadata for the action names; without a trace ID the page reads nothing. No attributes; when span_source is UNAVAILABLE the page shows the trace metadata alone. In the compliance menu only; an advisor reaches their own run's trace from a link on their A3 answer (ADR 0009 point 13); policy decides every request.
+  menu:
+    label: Trace
+    group: Compliance
+    roles: [compliance]
+- method: GET
+  path: /workbench/data-health
+  action: feed_runs
+  authentication: required
+  business: true
+  kind: business
+  note: O1. One governed feed_health over the range (default from the data window's first business day to the session's valuation date, at most 25 business days) at the session's cutoff, then one governed get_data_quality_report on the range's last day for the only tile, incomplete_household_count. Every expected cell, NOT_RECEIVED included, as a grid with a glyph and a word per cell and as a table. A refusal is the neutral denial page. No export control (ADR 0009 point 5).
+  menu:
+    label: Data health
+    group: Operations
+    roles: [ops]
+- method: GET
+  path: /workbench/feed-run
+  action: feed_runs
+  authentication: required
+  business: true
+  kind: business
+  note: O2. One governed feed_run_impact for the run, then one governed get_data_quality_report at the run's business date for each affected household's completeness. A preset names a cell; the run ID comes from that cell of an authorized feed_health. Stored reason codes, IDs only; null counts for feeds without per-account availability. A refusal is the neutral denial page, the same for an existing and an unknown run. In the operations menu only (ADR 0009 point 13).
+  menu:
+    label: Feed run
+    group: Operations
+    roles: [ops]
+- method: GET
+  path: /workbench
+  action: conversation_context
+  authentication: required
+  business: true
+  kind: business
+  note: Local demo session; freshly authorized conversation history. Retired from the engineer menu by the owner on 2026-11-10, when E1 and E2 became the engineer's screens; the route stays and policy still decides access.
+  menu:
+    label: Ask
+    group: Workspace
+    roles: [advisor, ops, compliance]
+- method: GET
+  path: /workbench/revocation
+  action: conversation_context
+  authentication: required
+  business: true
+  kind: business
+  note: A7, the seeded revocation (S04, Q02). Entered by a link from the "Current access" scenario, with no preset and no menu entry of its own (ADR 0009). For ADV-03 it opens this session's own seeded store, a copy of one store staged once per process with the evaluation runtime's Q02 staging, capped and deleted when the session ends; the main demo database is not read. Renders the freshly reauthorized conversation, whose earlier turn is paired tombstones. Any other persona gets a notice and nothing is staged or read.
+- method: POST
+  path: /workbench/revocation/answer
+  action: conversation_context
+  authentication: required
+  business: true
+  kind: business
+  note: Same-origin CSRF. Replays the one genuine recorded follow-up (decision 12) once per seeded store, against freshly reauthorized context, with no data tool offered; no provider key and no new retrieval.
+- method: GET
+  path: /workbench/revocation/evidence
+  action: provenance
+  authentication: required
+  business: true
+  kind: business
+  note: A source handle issued with A7's earlier result. The pair is checked in memory against the earlier turn of this session's seeded store before anything is read, then get_data_provenance reauthorizes it there; a revoked handle and one never issued get the same neutral denial.
+- method: GET
+  path: /workbench/claim
+  action: provenance
+  authentication: required
+  business: true
+  kind: business
+  note: Fresh conversation result plus governed provenance; never direct business storage.
+- method: POST
+  path: /workbench/answer
+  action: conversation_context
+  authentication: required
+  business: true
+  kind: business
+  note: Same-origin CSRF; current identity; each harness tool independently governed.
+- method: GET
+  path: /workbench/inspector/snapshot
+  action: snapshot
+  authentication: required
+  business: true
+  kind: business
+  note: Inspector page; one independently governed read per request. The menu lists it for the named roles only; policy decides access. Retired from the advisor menu by the owner on 2026-11-10, since the household page (A2) shows the same governed snapshot; the route stays.
+  menu:
+    label: Household snapshot
+    group: Inspectors
+    roles: [compliance]
+- method: GET
+  path: /workbench/inspector/quality
+  action: view_quality
+  authentication: required
+  business: true
+  kind: business
+  note: Inspector page; one independently governed read per request. The menu lists it for the named roles only; policy decides access.
+  menu:
+    label: Data quality
+    group: Inspectors
+    roles: [ops, compliance]
+- method: GET
+  path: /workbench/inspector/conflicts
+  action: view_conflicts
+  authentication: required
+  business: true
+  kind: business
+  note: Inspector page; one independently governed read per request. The menu lists it for the named roles only; policy decides access.
+  menu:
+    label: Relationship conflicts
+    group: Inspectors
+    roles: [advisor, ops, compliance]
+- method: GET
+  path: /workbench/inspector/feeds
+  action: feed_runs
+  authentication: required
+  business: true
+  kind: business
+  note: Inspector page; one independently governed read per request. The menu lists it for the named roles only; policy decides access. Retired from the operations menu by the owner on 2026-11-12 ("Retire Feed runs"), once O1 Data health and O2 Feed run became operations' screens; the route and the accepted feed_runs contract stay.
+  menu:
+    label: Feed runs
+    group: Inspectors
+    roles: [compliance]
+- method: GET
+  path: /workbench/inspector/decisions
+  action: view_decision_log
+  authentication: required
+  business: true
+  kind: business
+  note: Inspector page; one independently governed read per request. Retired from the compliance menu by the owner on 2026-11-11 ("Retire both"), once C1 Access decisions became compliance's screen; the route stays and policy still decides access.
+- method: GET
+  path: /workbench/inspector/eval
+  action: view_eval_reports
+  authentication: required
+  business: true
+  kind: business
+  note: Inspector page; one independently governed read per request. The menu lists it for the named roles only; policy decides access.
+  menu:
+    label: Evaluation summary
+    group: Inspectors
+    roles: [compliance]
+- method: GET
+  path: /workbench/inspector/trace
+  action: trace_scope
+  authentication: required
+  business: true
+  kind: business
+  note: Inspector page; one independently governed read per request. The menu lists it for the named roles only; policy decides access. Retired from the engineer menu by the owner on 2026-11-10 (build plan decision 13, step 4's exit test), and from the compliance menu on 2026-11-11 ("Retire both"), once C3 Trace became compliance's screen; the route and the accepted /api/trace rule stay.
+  menu:
+    label: Trace
+    group: Inspectors
+    roles: [advisor, ops]
+- method: GET
+  path: /workbench/evidence
+  action: provenance
+  authentication: required
+  business: true
+  kind: business
+  note: Data-page evidence (ADR 0009 section 2). An in-session pair check precedes any storage read; get_data_provenance re-authorizes every open; the session and pair are checked again before rendering.
+- method: GET
+  path: /workbench/assets/favicon.svg
+  action: operational_metadata
+  authentication: public
+  business: false
+  kind: bootstrap_metadata
+- method: GET
+  path: /workbench/assets/lockup.svg
+  action: operational_metadata
+  authentication: public
+  business: false
+  kind: bootstrap_metadata
+- method: GET
+  path: /workbench/assets/apple-touch-icon.png
+  action: operational_metadata
+  authentication: public
+  business: false
+  kind: bootstrap_metadata
+- method: GET
+  path: /workbench/assets/fonts/inter.woff2
+  action: operational_metadata
+  authentication: public
+  business: false
+  kind: bootstrap_metadata
+- method: GET
+  path: /workbench/assets/fonts/jetbrains-mono.woff2
+  action: operational_metadata
+  authentication: public
+  business: false
+  kind: bootstrap_metadata
+- method: GET
+  path: /workbench/assets/fonts/newsreader.woff2
+  action: operational_metadata
+  authentication: public
+  business: false
+  kind: bootstrap_metadata

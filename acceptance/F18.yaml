@@ -1,0 +1,96 @@
+version: 1
+id: F18
+question: Which held-away account is excluded and why?
+scenario: S14
+category: financial
+principal:
+  id: COMP-01
+  role: compliance
+request_time: '2026-11-01T12:00:00Z'
+valuation_date: '2026-09-30'
+known_as_of: '2026-10-31T16:00:00Z'
+household_ids:
+- WC-HH-0014
+authoritative_sources:
+  membership_reporting: CRM
+  quantity_cash: PAS trade-date snapshots
+  price: Custody latest eligible EOD close
+  fx: Same-day USD conversion fix; USD identity 1
+received_records:
+- source_system: CRM
+  feed: crm
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - household-WC-HH-0014
+  observation: Household, membership and reporting assertions determine included managed accounts.
+- source_system: PAS-A
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-A accounts.
+- source_system: PAS-B
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-B accounts.
+- source_system: CUSTODY-A
+  feed: prices
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Received close observations; secondary PAS quotes never replace custody pricing.
+missing_records:
+- Held-away0031/0032 deliberately have no PAS/custody files and are excluded from expected manifests.
+requests:
+- alias: snapshot
+  tool: get_household_snapshot
+  arguments:
+    as_of: '2026-09-30'
+    known_as_of: '2026-10-31T16:00:00Z'
+    household_id: WC-HH-0014
+  status: COMPLETE
+  metric_refs:
+  - MV_POSITION@1
+  - CASH_USD@1
+  - HOUSEHOLD_ASSETS@1
+required_facts:
+- request: snapshot
+  entity_type: household
+  entity_id: WC-HH-0014
+  field: assets_usd
+  value: '1000.00'
+  unit: USD
+  household_id: WC-HH-0014
+  valuation_date: '2026-09-30'
+  known_as_of: '2026-10-31T16:00:00Z'
+required_predicates: []
+required_caveats: []
+result_checks:
+- request: snapshot
+  path: quality_flags.*
+  value:
+    code: HELD_AWAY_EXCLUDED
+    subject: WC-AC-0031
+    severity: info
+  comparison: matches
+- request: snapshot
+  path: quality_flags.*
+  value:
+    code: HELD_AWAY_EXCLUDED
+    subject: WC-AC-0032
+    severity: info
+  comparison: matches
+required_mentions:
+- WC-AC-0031
+- WC-AC-0032
+forbidden_mentions: []
+expected_refusal: null
+manual_checks:
+- Managed0027/0028 total100stock+150MMF+750cash=1000. Held-away0031/0032 are explicitly excluded; no missing-feed
+  flags are invented.
+setup: []
+limitations: []
+required_source_disclosure: false

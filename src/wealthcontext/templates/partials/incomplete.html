@@ -1,0 +1,12 @@
+{% from "partials/macros.html" import icon, figure, figure_link %}
+{# What an INCOMPLETE valuation shows instead of a total: the fresh subtotal, labelled as
+   not a total, and the stale and missing components exactly as returned. On a data page
+   `evidence_url` makes the subtotal open the result's source records. #}
+{% if result.status == 'INCOMPLETE' and result.data and result.data.fresh_subtotal_usd is defined %}<section class="incomplete" aria-label="Valuation incomplete">
+<h2>{{ icon('incomplete') }}Valuation incomplete. No total is shown.</h2>
+<div class="incomplete-cols">
+<div><p class="label">Fresh subtotal (not a total)</p><p class="figure-lg">{% if evidence_url %}{{ figure_link({'value': result.data.fresh_subtotal_usd, 'unit': 'USD'}, evidence_url, 'Fresh subtotal (not a total)') }}{% else %}{{ figure({'value': result.data.fresh_subtotal_usd, 'unit': 'USD'}) }}{% endif %}</p></div>
+<div><p class="label">Stale components</p>{% for component in result.data.stale_components %}<p><span class="mono">{{ component.subject }}</span><br>{% if component.last_known_value_usd is not none %}Last known {{ figure({'value': component.last_known_value_usd, 'unit': 'USD'}) }} · {% endif %}price date {{ component.price_date|long_date }}{% if component.price_age_business_days is defined %} · {{ figure({'value': component.price_age_business_days, 'unit': 'days'}) }} old (business){% endif %}</p>{% else %}<p class="small">None returned.</p>{% endfor %}</div>
+<div><p class="label">Not received</p>{% for component in result.data.missing_components %}<p class="mono">{{ component }}</p>{% else %}<p class="small">None returned.</p>{% endfor %}</div>
+</div>
+</section>{% endif %}

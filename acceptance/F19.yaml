@@ -1,0 +1,162 @@
+version: 1
+id: F19
+question: Why is the sweep money-market fund not a concentration breach?
+scenario: S15
+category: financial
+principal:
+  id: COMP-01
+  role: compliance
+request_time: '2026-11-01T12:00:00Z'
+valuation_date: '2026-09-30'
+known_as_of: '2026-10-31T16:00:00Z'
+household_ids:
+- WC-HH-0014
+authoritative_sources:
+  membership_reporting: CRM
+  quantity_cash: PAS trade-date snapshots
+  price: Custody latest eligible EOD close
+  fx: Same-day USD conversion fix; USD identity 1
+received_records:
+- source_system: CRM
+  feed: crm
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - household-WC-HH-0014
+  observation: Household, membership and reporting assertions determine included managed accounts.
+- source_system: PAS-A
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-A accounts.
+- source_system: PAS-B
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-B accounts.
+- source_system: CUSTODY-A
+  feed: prices
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Received close observations; secondary PAS quotes never replace custody pricing.
+missing_records: []
+requests:
+- alias: exposure
+  tool: get_portfolio_exposure
+  arguments:
+    as_of: '2026-09-30'
+    known_as_of: '2026-10-31T16:00:00Z'
+    household_id: WC-HH-0014
+    group_by: issuer
+  status: COMPLETE
+  metric_refs:
+  - MV_POSITION@1
+  - CASH_USD@1
+  - HOUSEHOLD_ASSETS@1
+  - ISSUER_EXPOSURE@1
+- alias: book
+  tool: get_concentrated_positions
+  arguments:
+    as_of: '2026-09-30'
+    known_as_of: '2026-10-31T16:00:00Z'
+    household_id: WC-HH-0014
+    threshold_pct: '10.00'
+  status: COMPLETE
+  metric_refs:
+  - MV_POSITION@1
+  - CASH_USD@1
+  - HOUSEHOLD_ASSETS@1
+  - ISSUER_EXPOSURE@1
+  - CONCENTRATION@1
+required_facts:
+- request: exposure
+  entity_type: security
+  entity_id: WC-SEC-0017
+  field: allocation_pct
+  value: '15.00'
+  unit: pct
+  household_id: WC-HH-0014
+  valuation_date: '2026-09-30'
+  known_as_of: '2026-10-31T16:00:00Z'
+- request: exposure
+  entity_type: security
+  entity_id: WC-SEC-0017
+  field: exposure_usd
+  value: '150.00'
+  unit: USD
+  household_id: WC-HH-0014
+  valuation_date: '2026-09-30'
+  known_as_of: '2026-10-31T16:00:00Z'
+required_predicates: []
+required_caveats: []
+result_checks:
+- request: book
+  path: data.breaches.*.issuer_id
+  value: WC-ISS-0001
+  comparison: equals
+- request: exposure
+  path: data.fund_vehicle_exposures.items.*.entity_id
+  value: WC-SEC-0017
+  comparison: equals
+- request: exposure
+  path: quality_flags.*
+  value:
+    code: HELD_AWAY_EXCLUDED
+    subject: WC-AC-0031
+    severity: info
+  comparison: matches
+- request: exposure
+  path: quality_flags.*
+  value:
+    code: HELD_AWAY_EXCLUDED
+    subject: WC-AC-0032
+    severity: info
+  comparison: matches
+- request: book
+  path: data.breaches.*.issuer_id
+  value:
+  - WC-ISS-0001
+  comparison: exact_values
+- request: book
+  path: data.breach_metadata.item_count
+  value: 1
+  comparison: equals
+- request: book
+  path: data.breach_metadata.total_item_count
+  value: 1
+  comparison: equals
+- request: book
+  path: data.breach_metadata.truncated
+  value: false
+  comparison: equals
+- request: exposure
+  path: data.issuer_exposures.items.*.entity_id
+  value: WC-ISS-0017
+  comparison: not_contains
+- request: exposure
+  path: data.issuer_exposures.items.*
+  value:
+    entity_id: WC-ISS-0001
+    exposure_usd: '100.00'
+    concentration_pct: '10.00'
+  comparison: matches
+- request: book
+  path: data.breaches.*
+  value:
+    issuer_id: WC-ISS-0001
+    exposure_usd: '100.00'
+    concentration_pct: '10.00'
+    meets_threshold: true
+  comparison: matches
+required_mentions: []
+forbidden_mentions: []
+expected_refusal: null
+manual_checks:
+- MMF150 / assets1000 =15% vehicle allocation. It contributes to denominator but not any operating-company
+  issuer numerator. Stock issuer0001 alone breaches10%.
+setup: []
+limitations: []
+required_source_disclosure: false

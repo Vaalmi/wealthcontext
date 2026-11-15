@@ -1,0 +1,175 @@
+version: 1
+id: F15
+question: Why are custody and PAS quantities different before settlement?
+scenario: S13a
+category: financial
+principal:
+  id: COMP-01
+  role: compliance
+request_time: '2026-11-01T12:00:00Z'
+valuation_date: '2026-09-30'
+known_as_of: '2026-10-31T16:00:00Z'
+household_ids:
+- WC-HH-0013
+authoritative_sources:
+  membership_reporting: CRM
+  quantity_cash: PAS trade-date snapshots
+  price: Custody latest eligible EOD close
+  fx: Same-day USD conversion fix; USD identity 1
+received_records:
+- source_system: CRM
+  feed: crm
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - household-WC-HH-0013
+  observation: Household, membership and reporting assertions determine included managed accounts.
+- source_system: PAS-A
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-A accounts.
+- source_system: PAS-B
+  feed: pas_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-B accounts.
+- source_system: CUSTODY-A
+  feed: prices
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids: []
+  observation: Received close observations; secondary PAS quotes never replace custody pricing.
+- source_system: PAS-A
+  feed: transactions
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - transaction-WC-TXN-0077
+  observation: PAS whole buy10 versus custody0; active September30 buy +10 shares and -251USD settlesOctober1.
+    PAS cash9749, custody10000.
+- source_system: CUSTODY-A
+  feed: custody_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - cash-WC-AC-0025-USD
+  - position-WC-AC-0029-WC-SEC-0001
+  - cash-WC-AC-0029-USD
+  observation: Received settled quantity/cash baseline for the corresponding pending/cancelled transaction
+    reconciliation. Complete account manifests also prove zero settled quantities for accounts0025/0030;
+    zero positions have no raw position row.
+- source_system: CUSTODY-B
+  feed: custody_snapshots
+  business_date: '2026-09-30'
+  recorded_at: '2026-09-30T22:00:00Z'
+  source_record_ids:
+  - position-WC-AC-0026-WC-SEC-0001
+  - cash-WC-AC-0026-USD
+  - cash-WC-AC-0030-USD
+  observation: Received settled quantity/cash baseline for the corresponding pending/cancelled transaction
+    reconciliation. Complete account manifests also prove zero settled quantities for accounts0025/0030;
+    zero positions have no raw position row.
+missing_records: []
+requests:
+- alias: snapshot
+  tool: get_household_snapshot
+  arguments:
+    as_of: '2026-09-30'
+    known_as_of: '2026-10-31T16:00:00Z'
+    household_id: WC-HH-0013
+  status: COMPLETE
+  metric_refs:
+  - MV_POSITION@1
+  - CASH_USD@1
+  - HOUSEHOLD_ASSETS@1
+required_facts:
+- request: snapshot
+  entity_type: position
+  entity_id: WC-AC-0025:WC-SEC-0001
+  field: pending_delta
+  value: '10'
+  unit: shares
+  household_id: WC-HH-0013
+  valuation_date: '2026-09-30'
+  known_as_of: '2026-10-31T16:00:00Z'
+- request: snapshot
+  entity_type: position
+  entity_id: WC-AC-0025:WC-SEC-0001
+  field: authoritative
+  value: '10'
+  unit: shares
+  household_id: WC-HH-0013
+  valuation_date: '2026-09-30'
+  known_as_of: '2026-10-31T16:00:00Z'
+- request: snapshot
+  entity_type: account
+  entity_id: WC-AC-0025
+  field: cash.USD.pending_delta
+  value: '-251.00'
+  unit: USD
+  household_id: WC-HH-0013
+  valuation_date: '2026-09-30'
+  known_as_of: '2026-10-31T16:00:00Z'
+required_predicates:
+- request: snapshot
+  entity_type: position
+  entity_id: WC-AC-0025:WC-SEC-0001
+  kind: reconciliation
+  field: reconciliation_status
+  expect: PENDING_SETTLEMENT
+required_caveats: []
+result_checks:
+- request: snapshot
+  path: quality_flags.*
+  value:
+    code: PENDING_SETTLEMENT
+    subject: WC-AC-0025:WC-SEC-0001
+    severity: info
+  comparison: matches
+- request: snapshot
+  path: quality_flags.*
+  value:
+    code: PENDING_SETTLEMENT
+    subject: WC-AC-0025:USD
+    severity: info
+  comparison: matches
+- request: snapshot
+  path: quality_flags.*
+  value:
+    code: PENDING_SETTLEMENT
+    subject: WC-AC-0026:WC-SEC-0001
+    severity: info
+  comparison: matches
+- request: snapshot
+  path: quality_flags.*
+  value:
+    code: PENDING_SETTLEMENT
+    subject: WC-AC-0026:USD
+    severity: info
+  comparison: matches
+- request: snapshot
+  path: quality_flags.*
+  value:
+    code: PENDING_SETTLEMENT
+    subject: WC-AC-0030:WC-SEC-0001
+    severity: info
+  comparison: matches
+- request: snapshot
+  path: quality_flags.*
+  value:
+    code: PENDING_SETTLEMENT
+    subject: WC-AC-0030:USD
+    severity: info
+  comparison: matches
+required_mentions: []
+forbidden_mentions: []
+expected_refusal: null
+manual_checks:
+- PAS whole buy10 versus custody0; active September30 buy +10 shares and -251USD settlesOctober1. PAS
+  cash9749, custody10000.
+setup: []
+limitations: []
+required_source_disclosure: false

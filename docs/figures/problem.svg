@@ -1,0 +1,56 @@
+<svg class="dg" viewBox="-14 -14 1028 478" width="1028" height="478" role="img" aria-label="An advisor asks how much of the Okafor family&#x27;s money is in Northwind Rail. The custodian, client records and accounting system each say something different; an AI reading them directly answers $1.4M, 24%, using an old price, counting an account that left the family, picking one of two share counts and giving no warning." xmlns="http://www.w3.org/2000/svg"><style>svg{--bg:#F2F4F3;--panel:#FBFCFB;--surface:#FFFFFF;--surface-2:#E9ECEB;--zone:#F4F6F5;--fg:#18202B;--fg-muted:#566070;--line:#CDD3D6;--line-strong:#7B8592;--edge:#46505E;--accent:#2756A6;--accent-soft:#E2EAF7;--ok:#1F7A4D;--ok-soft:#DFF1E7;--warn:#9C5B0E;--warn-soft:#FAEBD5;--deny:#B02A22;--deny-soft:#F8E1DF;--display:Georgia, "Times New Roman", serif;--body:"IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;--mono:ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;}
+@media (prefers-color-scheme: dark){svg{--bg:#11161C;--panel:#161C23;--surface:#1D242D;--surface-2:#252D38;--zone:#192028;--fg:#E5E9EE;--fg-muted:#9AA4B1;--line:#323B47;--line-strong:#6A7584;--edge:#A9B2BF;--accent:#8EB2F2;--accent-soft:#1D2C47;--ok:#6FCB9A;--ok-soft:#163325;--warn:#E8B062;--warn-soft:#382813;--deny:#F28B83;--deny-soft:#3B1C1A;}}
+.panel{fill:var(--panel);stroke:var(--line)}
+.dg text{font-family:var(--body)}
+.dg .tt{font-size:13px;font-weight:600;fill:var(--fg)}
+.dg .ts{font-size:11.5px;fill:var(--fg-muted)}
+.dg .lbl{font-size:11px;fill:var(--fg-muted)}
+.dg .mono{font-family:var(--mono)}
+.dg .tt.mono{font-size:12.5px}
+.dg .strong{fill:var(--fg);font-weight:600}
+.dg .big{font-family:var(--display);font-size:22px;font-weight:600;fill:var(--fg)}
+.dg .axt{fill:var(--fg);font-weight:500}
+.dg .zl{font-size:10.5px;letter-spacing:.08em;font-weight:600;fill:var(--fg-muted)}
+.dg .chipt{font-size:11.5px;font-weight:600}
+.dg .accentt{fill:var(--accent)} .dg .okt{fill:var(--ok)} .dg .warnt{fill:var(--warn)} .dg .denyt{fill:var(--deny)}
+.dg .lbg{fill:var(--panel)}
+.dg .zone{fill:var(--zone);stroke:var(--line);stroke-dasharray:5 4}
+.dg .box{fill:var(--surface);stroke:var(--line-strong);stroke-width:1.1}
+.dg .box.q{stroke-width:1.6}
+.dg .box.accent{fill:var(--accent-soft);stroke:var(--accent)}
+.dg .box.ok{fill:var(--ok-soft);stroke:var(--ok)}
+.dg .box.warn{fill:var(--warn-soft);stroke:var(--warn)}
+.dg .box.deny{fill:var(--deny-soft);stroke:var(--deny)}
+.dg .box.muted{fill:var(--surface-2);stroke:var(--line)}
+.dg .box.ghost{fill:none;stroke:var(--line-strong);stroke-dasharray:6 4}
+.dg .edge{fill:none;stroke:var(--edge);stroke-width:1.4}
+.dg .edge.accent{stroke:var(--accent)} .dg .edge.ok{stroke:var(--ok)} .dg .edge.deny{stroke:var(--deny)} .dg .edge.warn{stroke:var(--warn)}
+.dg .edge.dash{stroke-dasharray:5 4}
+.dg .edge.divider{stroke:var(--accent);stroke-dasharray:2 4;stroke-width:1.6}
+.dg .edge.guide{stroke:var(--fg-muted);stroke-dasharray:4 4;stroke-width:1.1}
+.dg .edge.guide.accent{stroke:var(--accent)}
+.dg .edge.life{stroke:var(--line-strong);stroke-dasharray:3 5;stroke-width:1}
+.dg .edge.axis{stroke:var(--fg-muted);stroke-width:1}
+.dg .head{fill:var(--edge)} .dg .head.accent{fill:var(--accent)} .dg .head.ok{fill:var(--ok)} .dg .head.deny{fill:var(--deny)} .dg .head.warn{fill:var(--warn)}
+.dg .reg0{fill:var(--surface-2)} .dg .reg1{fill:var(--surface)} .dg .reg2{fill:var(--accent-soft)}
+.dg .plotframe{fill:none;stroke:var(--line-strong)}
+.dg .dot{fill:var(--accent);stroke:var(--panel);stroke-width:2}
+.dg .bar{fill:var(--line-strong)} .dg .bar.accent{fill:var(--accent)}
+.dg .bar.pending{fill:none;stroke:var(--accent);stroke-width:1.4;stroke-dasharray:3 3}
+.dg .bar.ghost{fill:none;stroke:var(--line-strong);stroke-dasharray:5 4}
+.dg .tt14{font-size:14px;font-weight:600;fill:var(--fg)}
+.dg .bt{font-size:13.5px;fill:var(--fg)}
+.dg .bq{font-size:15.5px;font-weight:500;fill:var(--fg)}
+.dg .hl{fill:var(--accent);font-weight:700}
+.dg .person{fill:var(--line-strong)}
+.dg .bubble{fill:var(--surface);stroke:var(--line-strong);stroke-width:1.1}
+.dg .bubble.soft{fill:var(--surface-2);stroke:none}
+.dg .bubble.deny{fill:var(--deny-soft);stroke:var(--deny)}
+.dg .bubble.accent{fill:var(--accent-soft);stroke:var(--accent)}
+.dg .badge{fill:var(--deny)}
+.dg .badget{font-size:11px;font-weight:700;fill:var(--panel)}
+.dg .card{fill:var(--surface);stroke:var(--line)}
+.dg .dotc.warn{fill:var(--warn)} .dg .dotc.deny{fill:var(--deny)}
+.dg .step{fill:var(--surface);stroke:var(--line-strong);stroke-width:2}
+.dg .step.accent{fill:var(--accent-soft);stroke:var(--accent)} .dg .step.ok{fill:var(--ok-soft);stroke:var(--ok)}
+.dg .stepn{font-family:var(--display);font-size:19px;font-weight:600;fill:var(--fg)}</style><rect class="panel" x="-13.5" y="-13.5" width="1027" height="477" rx="10"/><defs><marker id="pp-base" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="head base"/></marker></defs><path class="edge " d="M 290.0 82.0 L 335.0 82.0 L 335.0 192.0 L 380.0 192.0" marker-end="url(#pp-base)"/><path class="edge " d="M 290.0 212.0 L 380.0 212.0" marker-end="url(#pp-base)"/><path class="edge " d="M 290.0 342.0 L 335.0 342.0 L 335.0 232.0 L 380.0 232.0" marker-end="url(#pp-base)"/><path class="edge " d="M 600.0 60.0 L 470.0 60.0 L 470.0 170.0" marker-end="url(#pp-base)"/><path class="edge " d="M 560.0 202.0 L 600.0 202.0" marker-end="url(#pp-base)"/><rect class="box " x="20" y="30" width="270" height="104" rx="7"/><text class="tt t" x="155.0" y="63.0" text-anchor="middle">Custodian</text><text class="ts" x="155.0" y="79.0" text-anchor="middle">where the assets are held</text><text class="ts" x="155.0" y="94.0" text-anchor="middle">Northwind: 10,000 shares</text><text class="ts" x="155.0" y="109.0" text-anchor="middle">price: from Sep 24</text><rect class="box " x="20" y="160" width="270" height="104" rx="7"/><text class="tt t" x="155.0" y="193.0" text-anchor="middle">Client records (CRM)</text><text class="ts" x="155.0" y="209.0" text-anchor="middle">who belongs to the family</text><text class="ts" x="155.0" y="224.0" text-anchor="middle">Okafor family: 3 people</text><text class="ts" x="155.0" y="239.0" text-anchor="middle">Daniel&#x27;s account moved out in August</text><rect class="box " x="20" y="290" width="270" height="104" rx="7"/><text class="tt t" x="155.0" y="323.0" text-anchor="middle">Portfolio accounting</text><text class="ts" x="155.0" y="339.0" text-anchor="middle">the books</text><text class="ts" x="155.0" y="354.0" text-anchor="middle">Northwind: 12,000 shares</text><text class="ts" x="155.0" y="369.0" text-anchor="middle">still counts Daniel&#x27;s account</text><rect class="box muted" x="380" y="170" width="180" height="80" rx="7"/><text class="tt mutedt" x="470.0" y="206.0" text-anchor="middle">AI assistant</text><text class="ts" x="470.0" y="222.0" text-anchor="middle">reading raw data</text><circle class="person " cx="950" cy="50" r="9"/><path class="person " d="M 935 76 Q 935 62 950 62 Q 965 62 965 76 Z"/><rect class="bubble soft" x="600" y="28" width="320" height="64" rx="14"/><polygon class="bubble soft" points="919,52.0 932,60.0 919,68.0"/><rect class="bubble deny" x="600" y="170" width="320" height="64" rx="14"/><circle class="badge deny" cx="268" cy="105" r="9"/><text class="badget" x="268" y="109" text-anchor="middle">1</text><circle class="badge deny" cx="40" cy="90" r="9"/><text class="badget" x="40" y="94" text-anchor="middle">3</text><circle class="badge deny" cx="268" cy="235" r="9"/><text class="badget" x="268" y="239" text-anchor="middle">2</text><circle class="badge deny" cx="40" cy="350" r="9"/><text class="badget" x="40" y="354" text-anchor="middle">3</text><circle class="badge deny" cx="268" cy="365" r="9"/><text class="badget" x="268" y="369" text-anchor="middle">2</text><g><rect class="lbg" x="400.9" y="148.0" width="138.1" height="16" rx="3"/><text class="lbl" x="470.0" y="160.0" text-anchor="middle">reads all three as-is</text></g><text class="ts" x="950.0" y="98.0" text-anchor="middle">Advisor</text><text class="bt" x="616" y="55" text-anchor="start">How much of the Okafor family&#x27;s money</text><text class="bt" x="616" y="73" text-anchor="start">is in Northwind Rail?</text><g><rect class="lbg" x="517.8" y="52.0" width="34.4" height="16" rx="3"/><text class="lbl t" x="535.0" y="64.0" text-anchor="middle">asks</text></g><text class="zl" x="600.0" y="160.0" text-anchor="start">SOUNDS CONFIDENT</text><text class="bt" x="616" y="197" text-anchor="start">“About $1.4M, or 24% of the</text><text class="bt" x="616" y="215" text-anchor="start">family&#x27;s assets.”</text><text class="zl" x="600.0" y="270.0" text-anchor="start">WHAT WENT WRONG</text><circle class="badge deny" cx="612" cy="292" r="9"/><text class="badget" x="612" y="296" text-anchor="middle">1</text><text class="bt" x="630" y="296" text-anchor="start">used a price four business days old</text><circle class="badge deny" cx="612" cy="320" r="9"/><text class="badget" x="612" y="324" text-anchor="middle">2</text><text class="bt" x="630" y="324" text-anchor="start">counted an account that left the family</text><circle class="badge deny" cx="612" cy="348" r="9"/><text class="badget" x="612" y="352" text-anchor="middle">3</text><text class="bt" x="630" y="352" text-anchor="start">picked one of two share counts</text><circle class="badge deny" cx="612" cy="376" r="9"/><text class="badget" x="612" y="380" text-anchor="middle">4</text><text class="bt" x="630" y="380" text-anchor="start">gave no warning about any of it</text><text class="ts" x="20.0" y="436.0" text-anchor="start">Illustrative example with synthetic data.</text></svg>

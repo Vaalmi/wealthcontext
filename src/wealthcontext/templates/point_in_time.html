@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, badge, state, figure_link, counts %}
+{# C2: one household at two knowledge cutoffs, side by side. Each column is a governed
+   snapshot and a governed receipts list at its own cutoff. Figures are shown as each
+   snapshot returned them; nothing is set against the other column. A receipt in one list
+   and not the other is marked by its run ID alone (ADR 0009 section 6). #}
+{% block title %}Point in time{% endblock %}
+{% block main %}
+<p class="crumb">Compliance · Point in time</p>
+<div class="page-head"><div><h1>Point in time</h1>
+<p class="sub"><span class="mono">{{ household_id }}</span> · requested for {{ context.as_of|long_date }} · what was known at two knowledge cutoffs</p></div></div>
+<form method="get" action="/workbench/point-in-time" class="card filters" aria-labelledby="compare-title">
+<h2 id="compare-title" class="h3">Cutoffs</h2>
+<div class="filter-grid">
+<div><label for="pit-household">Household</label><input id="pit-household" name="household_id" value="{{ household_id }}" spellcheck="false" autocomplete="off"></div>
+<div><label for="pit-compare">Comparison cutoff <span>known as of, UTC</span></label><input id="pit-compare" name="compare_known_as_of" type="datetime-local" step="1" value="{{ compare_value }}"></div>
+</div>
+<div class="filter-actions"><button type="submit" class="button primary">Show both cutoffs</button></div>
+<p class="help">The session cutoff is {{ context.known_as_of|long_instant }}, from the context bar. The comparison cutoff belongs to this page only: it does not change the session.</p>
+</form>
+<div class="pit-grid">
+{% for column in columns %}{% set snapshot = column.snapshot %}{% set receipts = column.receipts %}
+{% set snap = snapshot.data if snapshot.error is none else none %}
+{% set listed = receipts.data if receipts.error is none else none %}
+{% set evidence_url = evidence_link(snapshot.result_id, snapshot.source_refs[0]) if snap and snapshot.source_refs else none %}
+<section class="card pit-column" aria-labelledby="column-{{ loop.index }}">
+<div class="card-head"><h2 id="column-{{ loop.index }}" class="h3">{{ column.label }}</h2></div>
+<p class="sub">Known as of {{ column.known_as_of|long_instant }}{% if snapshot.valuation_date %} · valued on {{ snapshot.valuation_date|long_date }}{% endif %}</p>
+<h3 class="label">Household snapshot</h3>
+<p>{{ state(snapshot|envelope_state) }}</p>
+{% if snapshot.error %}<div class="note n-break" role="alert"><div><p><span class="mono">{{ snapshot.error.code }}</span> · {{ snapshot.error.message }}</p></div></div>
+{% elif snap %}
+{% with result = snapshot %}{% include "partials/incomplete.html" %}{% endwith %}
+{% if snapshot.status == 'COMPLETE' %}<div class="kpi-grid"><div class="kpi"><p class="label">Household assets in included accounts</p><p class="kpi-value">{{ figure_link({'value': snap.assets_usd, 'unit': 'USD'}, evidence_url, 'Household assets, ' ~ column.label) }}</p></div><div class="kpi"><p class="label">Cash</p><p class="kpi-value">{{ figure_link({'value': snap.cash_usd, 'unit': 'USD'}, evidence_url, 'Cash, ' ~ column.label) }}</p></div></div>{% endif %}
+{% with flags = snapshot.quality_flags %}{% include "partials/flags.html" %}{% endwith %}
+{% endif %}
+<h3 class="label">Receipts</h3>
+<p>{{ state(receipts|envelope_state) }}</p>
+{% if receipts.error %}<div class="note n-break" role="alert"><div><p><span class="mono">{{ receipts.error.code }}</span> · {{ receipts.error.message }}</p></div></div>
+{% elif listed %}
+<p class="counts">The snapshot cites <b>{{ listed.cited_record_count }}</b> received records; <b>{{ listed.records_without_run_count }}</b> of them have no recorded feed run.</p>
+{% if listed['items'] %}<div class="table-scroll" tabindex="0" role="region" aria-label="Receipts, {{ column.label }}"><table class="data"><thead><tr><th scope="col">Feed run</th><th scope="col">Business date</th><th scope="col">Recorded</th><th scope="col" class="num">Cited records</th></tr></thead>
+<tbody>{% for item in listed['items'] %}<tr><td class="name run"><span class="mono">{{ item.source_system }}</span> · {{ item.feed }}<span class="mono small muted cell-note run-id">{{ item.run_id }}</span>{% if column.only is not none and item.run_id in column.only %}<span class="cell-note">{{ badge('info', 'Only in this list') }}</span>{% endif %}</td><td>{{ item.business_date|long_date }}</td><td>{{ item.recorded_at|long_instant }}</td><td class="num">{{ item.record_count }}</td></tr>{% endfor %}</tbody></table></div>
+{% else %}<p class="small">No receipt was returned.</p>{% endif %}
+{{ counts(listed, 'receipts') }}
+{% with flags = receipts.quality_flags %}{% include "partials/flags.html" %}{% endwith %}
+{% if receipts.source_refs %}<p><a class="button ghost" data-drawer href="{{ evidence_link(receipts.result_id, receipts.source_refs[0]) }}">{{ icon('receipt') }}Open the cited records<span class="sr-only">, {{ column.label }}</span></a></p>{% endif %}
+{% endif %}
+</section>
+{% endfor %}
+{% if not compare %}<section class="card pit-column" aria-labelledby="column-empty"><h2 id="column-empty" class="h3">Comparison cutoff</h2><p class="help">Choose a comparison cutoff above to show a second snapshot and receipts list beside this one.</p></section>{% endif %}
+</div>
+<section class="card" aria-labelledby="read-title"><h2 id="read-title" class="h3">How to read the two lists</h2>
+<ul class="rule-list"><li>A receipt is a feed run that first delivered records the snapshot cites at that cutoff. Each list is its own governed result.</li><li>A record that a later identical delivery repeats keeps its first run, so earlier receipts stay listed beside later ones.</li><li>A run whose records were all replaced is listed at the earlier cutoff and not at the later one.</li><li>{{ badge('info', 'Only in this list') }} marks a run ID the other list does not hold. It is shown only when neither list is capped, since a capped list cannot show what it left out.</li></ul>
+</section>
+<details><summary>Governed result envelopes</summary>{% for column in columns %}<h3 class="label">{{ column.label }} · receipts</h3><pre>{{ column.receipts|json_text }}</pre><h3 class="label">{{ column.label }} · snapshot</h3><pre>{{ column.snapshot|json_text }}</pre>{% endfor %}</details>
+{% endblock %}

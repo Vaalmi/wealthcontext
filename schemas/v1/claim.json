@@ -1,0 +1,107 @@
+{
+  "$defs": {
+    "EntityReference": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "result_summary",
+            "household",
+            "account",
+            "issuer",
+            "security",
+            "position",
+            "lot",
+            "transaction",
+            "feed_run"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "id"
+      ],
+      "title": "EntityReference",
+      "type": "object"
+    }
+  },
+  "$id": "https://wealthcontext.example/schemas/v1/claim.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "entity": {
+      "$ref": "#/$defs/EntityReference"
+    },
+    "field": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+      "title": "Field",
+      "type": "string"
+    },
+    "format": {
+      "enum": [
+        "value_only",
+        "label_and_value"
+      ],
+      "title": "Format",
+      "type": "string"
+    },
+    "household_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Household Id"
+    },
+    "id": {
+      "pattern": "^c[1-9][0-9]*$",
+      "title": "Id",
+      "type": "string"
+    },
+    "result_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+      "title": "Result Id",
+      "type": "string"
+    },
+    "unit": {
+      "enum": [
+        "USD",
+        "pct",
+        "count",
+        "shares",
+        "fx_rate",
+        "days"
+      ],
+      "title": "Unit",
+      "type": "string"
+    },
+    "valuation_date": {
+      "format": "date",
+      "title": "Valuation Date",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "result_id",
+    "entity",
+    "field",
+    "household_id",
+    "valuation_date",
+    "unit",
+    "format"
+  ],
+  "title": "Claim",
+  "type": "object"
+}

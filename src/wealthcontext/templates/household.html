@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, badge, state, figure, figure_link, value_or %}
+{# A2 holdings and exposure, the A6 reconciliation tab and the A4 incomplete state. Each
+   tab is one governed result (the snapshot, or issuer exposure). Every figure is a field
+   that result returned, shown through the figure macro; nothing here adds, nets or
+   compares them. #}
+{% set snapshot = result %}
+{% set data = result.data if result.error is none else none %}
+{% set evidence_url = evidence_link(result.result_id, result.source_refs[0]) if data and result.source_refs else none %}
+{% set title = data.household_name if data else 'Household' %}
+{% block title %}{{ title }}{% endblock %}
+{% block main %}
+<p class="crumb"><a href="/workbench/book">My book</a> / Household</p>
+<div class="page-head"><div><div class="title-row"><h1>{{ title }}</h1>{{ state(snapshot|envelope_state) }}</div>
+<p class="sub"><span class="mono">{{ household_id }}</span>{% if data and data.item_count is defined %} · Included accounts: {{ data.item_count }}{% endif %} · {% if snapshot.valuation_date %}Valued on {{ snapshot.valuation_date|long_date }}{% else %}Requested for {{ context.as_of|long_date }}{% endif %}, known as of {{ context.known_as_of|long_instant }}</p></div>
+<a class="button" href="/workbench">{{ icon('ask') }}Ask WealthContext</a></div>
+<div data-sensitive>
+{% if snapshot.error %}<div class="note n-break" role="alert"><div><strong>View unavailable</strong><p><span class="mono">{{ snapshot.error.code }}</span> · {{ snapshot.error.message }}</p></div></div>{% endif %}
+{% if data %}
+{% with result = snapshot %}{% include "partials/incomplete.html" %}{% endwith %}
+{% if snapshot.status == 'COMPLETE' and tab != 'exposure' %}<section class="kpi-grid" aria-label="Household figures">
+<div class="kpi"><p class="label">Household assets in included accounts</p><p class="kpi-value">{{ figure_link({'value': data.assets_usd, 'unit': 'USD'}, evidence_url, 'Household assets') }}</p></div>
+<div class="kpi"><p class="label">Cash</p><p class="kpi-value">{{ figure_link({'value': data.cash_usd, 'unit': 'USD'}, evidence_url, 'Cash') }}</p></div>
+</section>{% endif %}
+{% with flags = snapshot.quality_flags %}{% include "partials/flags.html" %}{% endwith %}
+<nav class="tabs" aria-label="Household views">{% for url, label, current in tabs %}<a href="{{ url }}"{% if current %} aria-current="page"{% endif %}>{{ label }}</a>{% endfor %}</nav>
+{% if tab == 'exposure' %}
+<section class="card" aria-labelledby="exposure-title"><h2 id="exposure-title">Exposure by issuer</h2>
+{% if snapshot.status == 'COMPLETE' %}<p class="help">Household assets in included accounts, the denominator: {{ figure_link({'value': data.assets_usd, 'unit': 'USD'}, evidence_url, 'Household assets') }}. Rows are ranked by the platform (<span class="mono">{{ data.issuer_exposures.ordering }}</span>).</p>
+{% for rows, title, singular, pct in ((data.issuer_exposures, 'Issuers', 'Issuer', 'concentration_pct'), (data.fund_vehicle_exposures, 'Fund vehicles', 'Fund vehicle', 'allocation_pct')) %}<h3 class="label">{{ title }}</h3>
+{% if rows['items'] %}<div class="table-scroll" tabindex="0" role="region" aria-label="{{ title }}"><table class="data"><thead><tr><th scope="col" class="num">Rank</th><th scope="col">{{ singular }}</th><th scope="col">Kind</th><th scope="col" class="num">Exposure (USD)</th><th scope="col" class="num">Share of household assets</th></tr></thead>
+<tbody>{% for row in rows['items'] %}<tr><td class="num">{{ row.rank }}</td><td class="name">{{ row.label }}<span class="mono cell-note">{{ row.entity_id }}</span></td><td class="mono">{{ row.exposure_kind }}</td><td class="num">{{ figure({'value': row.exposure_usd, 'unit': none}) }}</td><td class="num">{% if row[pct] is defined %}{{ figure({'value': row[pct], 'unit': 'pct'}) }}{% else %}<span class="muted">Not returned</span>{% endif %}</td></tr>{% endfor %}</tbody></table></div>
+<p class="help">Showing {{ rows.item_count }} of {{ rows.total_item_count }}. {% if rows.truncated %}The list is capped; the platform returns no further page.{% else %}Nothing was left out.{% endif %}</p>
+{% else %}<p class="small">None returned.</p>{% endif %}{% endfor %}
+{% else %}<p class="small">No exposure is computed while the valuation is incomplete: the platform returns no rows and no percentage.</p>{% endif %}
+</section>
+{% elif tab == 'reconciliation' %}
+<section class="card" aria-labelledby="recon-title"><h2 id="recon-title">Reconciliation</h2>
+<p class="help">Portfolio accounting (PAS) is authoritative on a trade-date basis; custody's settled positions and cash are the check. Each row is the reconciliation this snapshot returned, as the platform computed it.</p>
+{% if data.reconciliation %}<div class="table-scroll" tabindex="0" role="region" aria-label="Reconciliation rows"><table class="data"><thead><tr><th scope="col">Account</th><th scope="col">Line</th><th scope="col" class="num">PAS trade-date</th><th scope="col" class="num">Custody settled</th><th scope="col" class="num">Difference</th><th scope="col" class="num">Pending delta</th><th scope="col">Pending transactions</th><th scope="col">Status</th></tr></thead>
+<tbody>{% for account in data.reconciliation %}{% for row in account.rows %}{% set unit = row.currency if row.kind == 'cash' else 'shares' %}<tr><td class="mono">{{ account.account_id }}</td><td>{% if row.kind == 'cash' %}Cash · {{ row.currency }}{% else %}Shares · <span class="mono">{{ row.security_id }}</span>{% endif %}</td><td class="num">{{ figure({'value': row.authoritative, 'unit': unit}) }}</td><td class="num">{{ value_or({'value': row.settled, 'unit': unit}, 'Not available') }}</td><td class="num">{{ value_or({'value': row.difference, 'unit': unit}, 'Not available') }}</td><td class="num">{{ figure({'value': row.pending_delta, 'unit': unit}) }}</td><td class="mono">{% for transaction in row.pending_transaction_ids %}{{ transaction }}{% if not loop.last %}, {% endif %}{% else %}<span class="muted">None</span>{% endfor %}</td><td>{{ state(row.reconciliation_status, reconciliation_severity.get(row.reconciliation_status)) }}</td></tr>{% endfor %}{% endfor %}</tbody></table></div>
+{% else %}<p class="small">No reconciliation was returned for these cutoffs.</p>{% endif %}
+</section>
+<section class="card" aria-labelledby="rule-title"><h2 id="rule-title" class="h3">How the platform sets each status</h2>
+<ul class="rule-list"><li>{{ state('MATCHED') }} The difference is zero and nothing is pending.</li><li>{{ state('PENDING_SETTLEMENT', 'info') }} The difference equals the pending delta of transactions traded on or before the valuation date that settle after it. An info flag.</li><li>{{ state('BREAK', 'warning') }} Any other difference. A warning flag.</li><li>{{ state('RECONCILIATION_UNAVAILABLE', 'warning') }} Custody data was not available, so nothing is compared. A warning flag.</li></ul>
+</section>
+{% else %}
+<section class="card" aria-labelledby="holdings-title"><h2 id="holdings-title">Holdings</h2>
+<p class="help">Quantity and cash from portfolio accounting (PAS) snapshots; prices from the latest custody close on or before the valuation date. Values are in USD unless a column says otherwise.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Holdings"><table class="data"><thead><tr><th scope="col">Account</th><th scope="col">Holding</th><th scope="col" class="num">Quantity</th><th scope="col" class="num">Price (USD)</th><th scope="col">Price date</th><th scope="col" class="num">FX to USD</th><th scope="col" class="num">Market value (USD)</th></tr></thead>
+<tbody>{% for group in holdings(data) %}{% set account = group.account %}{% set label %}<span class="mono">{{ account.id }}</span><span class="small muted cell-note">{{ account.registration or 'Registration unavailable' }} · Custodian {{ account.custodian or '?' }} · {{ account.status or 'Status unavailable' }}</span>{% endset %}
+{% for position in group.positions %}<tr><td class="name">{{ label }}</td><td class="mono">{{ position.security_id }}<span class="small muted cell-note">Listed in {{ position.listing_currency }}</span></td><td class="num">{{ figure({'value': position.quantity, 'unit': none}) }}</td><td class="num">{{ figure({'value': position.price_usd, 'unit': none}) }}</td><td>{{ position.price_date|long_date }}</td><td class="num">{{ figure({'value': position.fx_rate, 'unit': none}) }}</td><td class="num">{{ figure({'value': position.market_value_usd, 'unit': none}) }}</td></tr>{% endfor %}
+{% for cash in group.cash %}<tr><td class="name">{{ label }}</td><td>Cash · {{ cash.currency }}<span class="small muted cell-note">{{ figure({'value': cash.amount_local, 'unit': cash.currency}) }}</span></td><td></td><td></td><td></td><td class="num">{{ figure({'value': cash.fx_rate, 'unit': none}) }}</td><td class="num">{{ figure({'value': cash.market_value_usd, 'unit': none}) }}</td></tr>{% endfor %}
+{% for component in group.stale %}<tr><td class="name">{{ label }}</td><td class="mono">{{ component.subject.partition(':')[2] }}</td><td colspan="5">{{ badge('incomplete', 'Price stale') }} Not valued: price date {{ component.price_date|long_date }}{% if component.last_known_value_usd is not none %}, last known {{ figure({'value': component.last_known_value_usd, 'unit': 'USD'}) }}{% endif %}. Listed under the incomplete notice, outside the fresh subtotal.</td></tr>{% endfor %}
+{% if not group.positions and not group.cash and not group.stale %}<tr><td class="name">{{ label }}</td><td colspan="6">{% if group.missing %}{{ badge('incomplete', 'Not received') }} No authoritative snapshot for this account at these cutoffs, so nothing is carried forward.{% else %}<span class="muted">No positions or cash were returned for this account.</span>{% endif %}</td></tr>{% endif %}
+{% endfor %}</tbody></table></div>
+{% if data.excluded_accounts %}<h3 class="label">Excluded accounts</h3><ul class="plain-list">{% for account in data.excluded_accounts %}<li><span class="mono">{{ account.id }}</span> · Custodian {{ account.custodian }} · <span class="mono">{{ account.reason }}</span></li>{% endfor %}</ul>{% endif %}
+</section>
+{% endif %}
+{% if evidence_url %}<section class="card" aria-labelledby="sources-title"><h2 id="sources-title" class="h3">Source records</h2><p class="help">Every figure on this page comes from one governed result. Opening its source records checks your access again and shows the received records behind it.</p><ul class="source-links">{% for handle in snapshot.source_refs %}<li><a href="{{ evidence_link(snapshot.result_id, handle) }}" data-drawer>{{ handle }}</a></li>{% endfor %}</ul></section>{% endif %}
+{% endif %}
+<details><summary>Governed result envelope</summary><pre>{{ result|json_text }}</pre></details>
+</div>
+{% endblock %}

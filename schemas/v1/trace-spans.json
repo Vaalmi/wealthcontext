@@ -1,0 +1,437 @@
+{
+  "$defs": {
+    "Error": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "UNAUTHENTICATED",
+            "NOT_AUTHORIZED",
+            "NOT_FOUND",
+            "INVALID_ARGUMENT",
+            "AS_OF_OUT_OF_RANGE",
+            "UNSUPPORTED_CURRENCY",
+            "RESULT_TOO_LARGE",
+            "POLICY_UNAVAILABLE",
+            "INTERNAL"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Details",
+          "type": "object"
+        },
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "retryable": {
+          "title": "Retryable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "retryable",
+        "details"
+      ],
+      "title": "Error",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "QualityFlag": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "AMBIGUOUS",
+            "AMBIGUOUS_ENTITY",
+            "PRICE_STALE",
+            "SOURCE_UNAVAILABLE",
+            "FX_UNAVAILABLE",
+            "HOUSEHOLD_MEMBERSHIP_CONFLICT",
+            "REPORTING_HOUSEHOLD_CONFLICT",
+            "OWNERSHIP_CONFLICT",
+            "OWNERSHIP_UNAVAILABLE",
+            "PENDING_SETTLEMENT",
+            "QUANTITY_BREAK",
+            "CASH_BREAK",
+            "RECONCILIATION_UNAVAILABLE",
+            "PRICE_SOURCE_MISMATCH",
+            "CLOSED_ACCOUNT_WITH_BALANCE",
+            "HELD_AWAY_EXCLUDED"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "detail": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Detail",
+          "type": "object"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "subject": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+          "title": "Subject",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "subject",
+        "detail"
+      ],
+      "title": "QualityFlag",
+      "type": "object"
+    },
+    "SpanItem": {
+      "additionalProperties": false,
+      "description": "Allowlisted span fields only: no attribute, event, link or resource field.",
+      "properties": {
+        "duration_ms": {
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "title": "Duration Ms",
+          "type": "string"
+        },
+        "name": {
+          "enum": [
+            "agent",
+            "tool",
+            "authz",
+            "query",
+            "calc",
+            "provider_context",
+            "answer_render",
+            "browser_history",
+            "authenticate",
+            "harness_http_failure",
+            "other"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "parent_omitted": {
+          "title": "Parent Omitted",
+          "type": "boolean"
+        },
+        "parent_span_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{16}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Parent Span Id"
+        },
+        "span_id": {
+          "pattern": "^[0-9a-f]{16}$",
+          "title": "Span Id",
+          "type": "string"
+        },
+        "start_time": {
+          "format": "date-time",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "status_code": {
+          "enum": [
+            "UNSET",
+            "OK",
+            "ERROR"
+          ],
+          "title": "Status Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "span_id",
+        "parent_span_id",
+        "parent_omitted",
+        "name",
+        "start_time",
+        "duration_ms",
+        "status_code"
+      ],
+      "title": "SpanItem",
+      "type": "object"
+    },
+    "TraceSpansData": {
+      "additionalProperties": false,
+      "properties": {
+        "item_count": {
+          "maximum": 200,
+          "minimum": 0,
+          "title": "Item Count",
+          "type": "integer"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/SpanItem"
+          },
+          "maxItems": 200,
+          "title": "Items",
+          "type": "array"
+        },
+        "ordering": {
+          "title": "Ordering",
+          "type": "string"
+        },
+        "scan_truncated": {
+          "title": "Scan Truncated",
+          "type": "boolean"
+        },
+        "span_source": {
+          "enum": [
+            "EXPORT",
+            "UNAVAILABLE"
+          ],
+          "title": "Span Source",
+          "type": "string"
+        },
+        "total_item_count": {
+          "minimum": 0,
+          "title": "Total Item Count",
+          "type": "integer"
+        },
+        "trace_id": {
+          "pattern": "^[0-9a-f]{32}$",
+          "title": "Trace Id",
+          "type": "string"
+        },
+        "truncated": {
+          "title": "Truncated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "trace_id",
+        "items",
+        "item_count",
+        "total_item_count",
+        "ordering",
+        "truncated",
+        "span_source",
+        "scan_truncated"
+      ],
+      "title": "TraceSpansData",
+      "type": "object"
+    }
+  },
+  "$id": "https://wealthcontext.example/schemas/v1/trace-spans.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "data": {
+            "type": "object"
+          },
+          "entitlement_revision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "error": {
+            "type": "null"
+          },
+          "policy_revision": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "type": "string"
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "status": {
+            "const": "ERROR"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "null"
+          },
+          "error": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "as_of": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "As Of"
+    },
+    "calculated_at": {
+      "format": "date-time",
+      "title": "Calculated At",
+      "type": "string"
+    },
+    "contract_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "data": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TraceSpansData"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "entitlement_revision": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Entitlement Revision"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Error"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "known_as_of": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Known As Of"
+    },
+    "metric_refs": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+        "type": "string"
+      },
+      "title": "Metric Refs",
+      "type": "array"
+    },
+    "policy_revision": {
+      "anyOf": [
+        {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Policy Revision"
+    },
+    "quality_flags": {
+      "items": {
+        "$ref": "#/$defs/QualityFlag"
+      },
+      "title": "Quality Flags",
+      "type": "array"
+    },
+    "result_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+      "title": "Result Id",
+      "type": "string"
+    },
+    "source_refs": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+        "type": "string"
+      },
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "COMPLETE",
+        "INCOMPLETE",
+        "ERROR"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "trace_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "valuation_date": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Valuation Date"
+    }
+  },
+  "required": [
+    "contract_version",
+    "trace_id",
+    "result_id",
+    "status",
+    "as_of",
+    "valuation_date",
+    "known_as_of",
+    "calculated_at",
+    "entitlement_revision",
+    "policy_revision",
+    "data",
+    "quality_flags",
+    "source_refs",
+    "metric_refs",
+    "error"
+  ],
+  "title": "Envelope[TraceSpansData]",
+  "type": "object"
+}

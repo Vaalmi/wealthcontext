@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}Workbench{% endblock %} · WealthContext</title>
+<link rel="icon" type="image/svg+xml" href="/workbench/assets/favicon.svg">
+<link rel="apple-touch-icon" href="/workbench/assets/apple-touch-icon.png">
+<link rel="stylesheet" href="/workbench/assets/workbench.css">
+<script src="/workbench/assets/workbench.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+{% include "partials/topbar.html" %}
+<div class="shell{{ ' with-nav' if menu else '' }}">
+{% if menu %}{% include "partials/nav.html" %}{% endif %}
+<main id="main" class="main" tabindex="-1">
+{% block main %}{% endblock %}
+</main>
+<aside id="evidence-drawer" class="drawer" aria-label="Evidence"{% if not drawer %} hidden{% endif %}>{% if drawer %}{% include "partials/drawer.html" %}{% endif %}</aside>
+</div>
+{% include "partials/context_form.html" %}
+<footer class="foot"><span>Platform-owned facts · Decimal arithmetic · Current access controls</span><span>All households and people are synthetic</span></footer>
+</body>
+</html>

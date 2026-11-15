@@ -1,0 +1,7 @@
+{
+  "id": "HAND-FX",
+  "description": "10 shares at EUR 50 with EUR/USD 1.10, CAD 100 at 0.75: 550 + 75 = 625",
+  "positions": [{"quantity": "10", "price": "50.00", "fx_to_usd": "1.10"}],
+  "cash": [{"amount": "100.00", "fx_to_usd": "0.75"}],
+  "expected_assets_usd": "625.00"
+}

@@ -1,0 +1,12 @@
+{% from "partials/macros.html" import icon, badge %}
+<header class="topbar">
+<a class="brand" href="/"><img src="/workbench/assets/lockup.svg" alt="WealthContext" width="165" height="28"></a>
+{% if session.token %}<div class="ctx" role="group" aria-label="Request context: opens one shared form">
+<button type="button" class="seg" data-open-context aria-haspopup="dialog">{{ icon('user') }}<span><span class="k">Persona</span><span class="v">{{ context.persona }} · {{ role_labels[role] }}</span></span></button>
+<button type="button" class="seg" data-open-context aria-haspopup="dialog">{{ icon('calendar') }}<span><span class="k">Valuation date</span><span class="v">{{ context.as_of|long_date }}</span></span></button>
+<button type="button" class="seg{{ ' hist' if history_view else '' }}" data-open-context aria-haspopup="dialog">{{ icon('clock') }}<span><span class="k">Known as of</span><span class="v">{{ 'History · ' if history_view else '' }}{{ context.known_as_of|long_instant }}</span></span></button>
+</div>{% endif %}
+{{ badge('synthetic', 'Synthetic data') }}
+<span class="spacer"></span>
+{% if landing %}<button type="button" class="button" data-open-context aria-haspopup="dialog">Enter workspace</button>{% else %}<a class="button ghost" href="/">Scenarios</a>{% endif %}
+</header>

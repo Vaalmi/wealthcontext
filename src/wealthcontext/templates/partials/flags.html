@@ -1,0 +1,3 @@
+{% from "partials/macros.html" import state %}
+{# Every flag on a result, each with its subject. Warnings are never collapsed. #}
+{% if flags %}<ul class="flag-list" aria-label="Quality flags">{% for flag in flags %}<li>{{ state(flag.code, flag.severity) }}<span class="mono">{{ flag.code }}</span><span class="flag-subject"><span class="label">{{ flag.severity }} · subject</span> <span class="mono">{{ flag.subject }}</span></span></li>{% endfor %}</ul>{% endif %}

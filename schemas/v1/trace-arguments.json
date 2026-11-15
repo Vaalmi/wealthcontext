@@ -1,0 +1,17 @@
+{
+  "$id": "https://wealthcontext.example/schemas/v1/trace-arguments.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "trace_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$",
+      "title": "Trace Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "trace_id"
+  ],
+  "title": "TraceArguments",
+  "type": "object"
+}

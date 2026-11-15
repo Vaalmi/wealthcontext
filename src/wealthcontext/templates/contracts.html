@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, state %}
+{# E2: contracts only. The MCP list is what tools/list, resources/list and prompts/list
+   publish; the schemas are the files exported under schemas/v1, shown unchanged. The page
+   reads no household, trace or span, and counts nothing. #}
+{% block title %}Tools and schemas{% endblock %}
+{% block main %}
+<p class="crumb">Contracts · Tools and schemas</p>
+<div class="page-head"><div><h1>Tools and schemas</h1><p class="sub">The read-only MCP tools as the server publishes them, each with its REST route, and every JSON Schema exported under <span class="mono">schemas/v1</span>. A tool and its REST route share one argument model.</p></div></div>
+{% if catalog.error %}<div class="note n-break" role="alert"><div><strong>Contracts unavailable</strong><p><span class="mono">{{ catalog.error.code }}</span> · {{ catalog.error.message }}</p></div></div>
+{% else %}
+<section class="card" aria-labelledby="tools-title"><h2 id="tools-title">MCP tools</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="MCP tools"><table class="data"><thead><tr><th scope="col">Tool</th><th scope="col">Arguments</th><th scope="col">REST route</th></tr></thead>
+<tbody>{% for tool in mcp.tools %}<tr><td class="name"><span class="mono"><b>{{ tool.name }}</b></span><span class="small cell-note">{{ tool.description }}</span></td><td>{% for argument in tool.arguments %}<span class="mono">{{ argument.name }}</span>{% if not argument.required %} <span class="small muted">optional</span>{% endif %}{% if not loop.last %}, {% endif %}{% else %}<span class="muted">None</span>{% endfor %}</td><td class="mono">{{ tool.rest or '' }}</td></tr>{% endfor %}</tbody></table></div>
+<h3 class="label">Schemas and annotations, tool by tool</h3>
+<ul class="plain-list">{% for tool in mcp.tools %}<li><details><summary><span class="mono">{{ tool.name }}</span></summary>
+<dl class="kv">{% for key, value in tool.annotations.items() %}<dt>{{ key }}</dt><dd class="mono">{{ value|json_text }}</dd>{% endfor %}</dl>
+<h4 class="label">Input schema</h4><pre class="schema" tabindex="0" role="region" aria-label="Input schema of {{ tool.name }}">{{ tool.input_schema|json_text }}</pre>
+{% if tool.output_schema %}<h4 class="label">Output schema</h4><pre class="schema" tabindex="0" role="region" aria-label="Output schema of {{ tool.name }}">{{ tool.output_schema|json_text }}</pre>{% endif %}
+</details></li>{% endfor %}</ul>
+</section>
+<div class="contract-grid">
+<section class="card" aria-labelledby="resources-title"><h2 id="resources-title" class="h3">Resources and prompts</h2>
+<ul class="plain-list">{% for resource in mcp.resources %}<li><span class="mono">{{ resource.uri }}</span><span class="small cell-note">{{ resource.description }} The catalog read for this page returned <b>{{ catalog.data.item_count }}</b> definitions.</span><a class="button" href="/workbench/metrics">Open the definitions {{ icon('arrow') }}</a></li>{% endfor %}
+{% for prompt in mcp.prompts %}<li><span class="mono">{{ prompt.name }}</span><span class="small cell-note">{{ prompt.description }} Arguments: {% for argument in prompt.arguments %}<span class="mono">{{ argument.name }}</span>{% if not argument.required %} (optional){% endif %}{% if not loop.last %}, {% endif %}{% endfor %}.</span></li>{% endfor %}</ul>
+<p class="help">Host answer guidelines ship as the server's instructions and as this prompt, from <span class="mono">prompts/host_guidelines.md</span>. They guide an external host's prose; they do not verify it.</p>
+</section>
+<section class="card" aria-labelledby="connect-title"><h2 id="connect-title" class="h3">Connect a host</h2>
+<pre>docker compose exec -T app wealthcontext print-mcp-config --persona ADV-01</pre>
+<p class="help">Prints a Claude Desktop configuration with a development token for a synthetic persona. The stdio bridge forwards it as a bearer token, and every call is governed as on REST.</p>
+</section>
+</div>
+<section class="card" aria-labelledby="schemas-title"><h2 id="schemas-title">Published JSON Schemas</h2>
+<p class="help">Each file as exported under <span class="mono">schemas/v1</span>. An argument schema validates a request; a result schema describes the envelope a call returns.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Published JSON Schemas"><table class="data"><thead><tr><th scope="col">Schema</th><th scope="col">Kind</th><th scope="col">Title</th></tr></thead>
+<tbody>{% for schema in schemas %}<tr><td class="mono"><a href="/workbench/contracts?schema_id={{ schema.id|urlencode }}#schema"{% if selected and selected.id == schema.id %} aria-current="true"{% endif %}>{{ schema.file }}</a></td><td>{{ schema.kind }}</td><td class="mono">{{ schema.title }}</td></tr>{% endfor %}</tbody></table></div>
+</section>
+{% if selected %}<section class="card" id="schema" aria-labelledby="schema-title"><h2 id="schema-title" class="h3"><span class="mono">{{ selected.file }}</span></h2>
+<p class="small mono">{{ selected.uri }}</p>
+<pre class="schema" tabindex="0" role="region" aria-label="{{ selected.file }}">{{ selected.text }}</pre>
+</section>
+{% elif missing %}<section class="card" id="schema" aria-labelledby="schema-title"><h2 id="schema-title" class="h3">No such schema</h2>
+<div class="note n-info">{{ icon('info') }}<div>No file under <span class="mono">schemas/v1</span> has that ID. Choose one from the list.</div></div>
+</section>{% endif %}
+{% endif %}
+<details><summary>Governed result envelope</summary>
+<h3 class="label">Metric catalog</h3><pre>{{ catalog|json_text }}</pre>
+</details>
+{% endblock %}

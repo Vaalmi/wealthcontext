@@ -1,0 +1,91 @@
+version: 1
+id: F09
+question: What authoritative account inputs are missing?
+scenario: S07
+category: financial
+principal:
+  id: COMP-01
+  role: compliance
+request_time: '2026-11-01T12:00:00Z'
+valuation_date: '2026-10-15'
+known_as_of: '2026-10-31T16:00:00Z'
+household_ids:
+- WC-HH-0007
+authoritative_sources:
+  membership_reporting: CRM
+  quantity_cash: PAS trade-date snapshots
+  price: Custody latest eligible EOD close
+  fx: Same-day USD conversion fix; USD identity 1
+received_records:
+- source_system: CRM
+  feed: crm
+  business_date: '2026-10-15'
+  recorded_at: '2026-10-15T22:00:00Z'
+  source_record_ids:
+  - household-WC-HH-0007
+  observation: Household, membership and reporting assertions determine included managed accounts.
+- source_system: PAS-A
+  feed: pas_snapshots
+  business_date: '2026-10-15'
+  recorded_at: '2026-10-15T22:00:00Z'
+  source_record_ids: []
+  observation: Full expected-account manifest; received trade-date rows for included custodian-A accounts.
+- source_system: PAS-B
+  feed: pas_snapshots
+  business_date: '2026-10-15'
+  recorded_at: '2026-10-15T22:00:00Z'
+  source_record_ids: []
+  observation: FAILED delivery; all expected B-account manifests retained, no content.
+- source_system: CUSTODY-A
+  feed: prices
+  business_date: '2026-10-15'
+  recorded_at: '2026-10-15T22:00:00Z'
+  source_record_ids: []
+  observation: Received close observations; secondary PAS quotes never replace custody pricing.
+missing_records:
+- PAS-B October 15 bytes are absent; expected account 0014 is unavailable, not zero.
+requests:
+- alias: snapshot
+  tool: get_household_snapshot
+  arguments:
+    as_of: '2026-10-15'
+    known_as_of: '2026-10-31T16:00:00Z'
+    household_id: WC-HH-0007
+  status: INCOMPLETE
+  metric_refs:
+  - MV_POSITION@1
+  - CASH_USD@1
+  - HOUSEHOLD_ASSETS@1
+required_facts:
+- request: snapshot
+  entity_type: household
+  entity_id: WC-HH-0007
+  field: fresh_subtotal_usd
+  value: '3508.00'
+  unit: USD
+  household_id: WC-HH-0007
+  valuation_date: '2026-10-15'
+  known_as_of: '2026-10-31T16:00:00Z'
+required_predicates: []
+required_caveats:
+- flag: SOURCE_UNAVAILABLE
+  subject: WC-AC-0014
+result_checks:
+- request: snapshot
+  path: data.assets_usd
+  value: null
+  comparison: absent
+- request: snapshot
+  path: data.missing_components
+  value: WC-AC-0014
+  comparison: contains
+required_mentions:
+- WC-AC-0014
+forbidden_mentions: []
+expected_refusal: null
+manual_checks:
+- 'Account 0013: 66 × USD38 + USD1000 = USD3508 fresh subtotal. Account 0014 cannot carry forward its
+  prior snapshot.'
+setup: []
+limitations: []
+required_source_disclosure: false

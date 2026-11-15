@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, badge, state, figure, counts, feed_state %}
+{# O2: one governed `feed_run_impact`, then the governed quality report at the run's
+   business date for each affected household's completeness. Accounts come from the
+   run's manifest, with the stored reason codes; households are attributed by the
+   platform. Identifiers only. A feed that publishes no per-account availability shows
+   that, never a zero. Nothing is counted here, and there is no export (ADR 0009). #}
+{% block title %}Feed run{% endblock %}
+{% block main %}
+<p class="crumb">Operations · <a href="/workbench/data-health">Data health</a> · Feed run</p>
+<div class="page-head"><div><h1>Feed run</h1>
+<p class="sub">What one feed run committed and what it left unavailable, read through the governed <span class="mono">feed_run_impact</span> at your knowledge cutoff, {{ context.known_as_of|long_instant }}.</p></div></div>
+{% if not query.run_id and not selected %}
+<form method="get" action="/workbench/feed-run" class="card filters" aria-labelledby="run-title">
+<h2 id="run-title" class="h3">Choose a run</h2>
+<div class="filter-grid"><div><label for="run-id">Run ID</label><input id="run-id" name="run_id" spellcheck="false" autocomplete="off" placeholder="RUN-…"></div></div>
+<div class="filter-actions"><button type="submit" class="button primary">Open run</button><a class="button ghost" href="/workbench/data-health">Back to Data health</a></div>
+<p class="help">Open a run from a cell on Data health, or enter its run ID. Nothing is read until you do.</p>
+</form>
+{% elif health and health.error %}<div class="note n-break" role="alert">{{ icon('break') }}<div><strong>Feed health unavailable</strong><p><span class="mono">{{ health.error.code }}</span> · {{ health.error.message }}</p></div></div>
+{% elif selected and (cell is none or not cell.run_id) %}
+<section class="card" aria-labelledby="cell-title"><div class="card-head"><h2 id="cell-title" class="h3"><span class="mono">{{ selected.source_system }}</span> · <span class="mono">{{ selected.feed }}</span> · {{ selected.business_date|long_date }}</h2>{{ feed_state('NOT_RECEIVED') }}</div>
+<p>No run of this feed for this business date was recorded by your knowledge cutoff, so there is no run to show.</p>
+<p><a class="button" href="/workbench/data-health">Back to Data health</a></p></section>
+{% elif impact.error %}<div class="note n-break" role="alert">{{ icon('break') }}<div><strong>Feed run unavailable</strong><p><span class="mono">{{ impact.error.code }}</span> · {{ impact.error.message }}</p>{% if impact.error.code == 'NOT_FOUND' %}<p>No run with this ID was recorded by your knowledge cutoff.</p>{% endif %}</div></div>
+{% else %}
+<section class="card" aria-labelledby="run-head">
+<div class="card-head"><h2 id="run-head" class="h3"><span class="mono">{{ data.source_system }}</span> · <span class="mono">{{ data.feed }}</span> · {{ data.business_date|long_date }}</h2>{{ feed_state(data.status) }}</div>
+<dl class="kv"><dt>Run ID</dt><dd class="mono">{{ data.run_id }}</dd><dt>Upstream status</dt><dd class="mono">{{ data.upstream_status }}</dd><dt>File received</dt><dd>{{ 'Yes' if data.file_received else 'No' }}</dd><dt>Recorded</dt><dd>{{ data.recorded_at|long_instant }}</dd><dt>Accepted records</dt><dd>{{ data.accepted_records }}</dd><dt>Rejected records</dt><dd>{{ data.rejected_records }}</dd><dt>Account attribution</dt><dd class="mono">{{ data.account_attribution }}</dd></dl>
+{% with flags = impact.quality_flags %}{% include "partials/flags.html" %}{% endwith %}
+{% if health and health.error is none %}{% with flags = health.quality_flags %}{% include "partials/flags.html" %}{% endwith %}{% endif %}
+{% if impact.source_refs %}<p><a class="button" data-drawer href="{{ evidence_link(impact.result_id, impact.source_refs[0]) }}">{{ icon('receipt') }}Source records of this result</a></p>{% endif %}
+</section>
+{% if data.account_attribution == 'NOT_ATTRIBUTABLE' %}
+<div class="note n-info">{{ icon('info') }}<div><strong>No accounts are attributed to this run</strong><p>Only the two snapshot feeds publish availability per account. For <span class="mono">{{ data.feed }}</span> the platform returns no account or household counts: they are not zero, they are not known.</p></div></div>
+{% else %}
+<section class="kpi-grid" aria-label="Run impact">
+<div class="kpi"><p class="label">Accounts expected</p><p class="kpi-value">{{ figure({'value': data.expected_account_count}) }}</p><p class="small muted">From the run's manifest, and CRM for any account it omits</p></div>
+<div class="kpi"><p class="label">Accounts committed</p><p class="kpi-value">{{ figure({'value': data.committed_account_count}) }}</p></div>
+<div class="kpi"><p class="label">Accounts affected</p><p class="kpi-value">{{ figure({'value': data.affected_account_count}) }}</p><p class="small muted">Unavailable for valuation from this run</p></div>
+<div class="kpi"><p class="label">Households affected</p><p class="kpi-value">{{ figure({'value': data.affected_household_count}) }}</p><p class="small muted">Affected accounts with no household attributed: {{ data.unattributed_account_count }}</p></div>
+</section>
+<section class="card" aria-labelledby="accounts-title"><h2 id="accounts-title">Affected accounts</h2>
+<p class="help">The reason is the code the platform stored when it received the run. A failed fetch and a truncated account share <span class="mono">ACCOUNT_MANIFEST_MISMATCH</span>; the run's status and whether a file was received tell them apart.</p>
+{% if data.affected_accounts['items'] %}<div class="table-scroll" tabindex="0" role="region" aria-labelledby="accounts-title"><table class="data">
+<thead><tr><th scope="col">Account</th><th scope="col">Manifest label</th><th scope="col">Reason</th><th scope="col">Household</th><th scope="col">Attribution</th></tr></thead>
+<tbody>{% for item in data.affected_accounts['items'] %}<tr><td class="mono">{% if item.account_id %}{{ item.account_id }}{% else %}<span class="muted">Not resolved</span>{% endif %}</td><td class="mono">{% if item.manifest_account_id %}{{ item.manifest_account_id }}{% else %}<span class="muted">Not in the manifest</span>{% endif %}</td><td><span class="mono">{{ item.reason }}</span><span class="cell-note small muted">{{ reasons[item.reason] }}</span></td><td class="mono">{% if item.household_id %}{{ item.household_id }}{% else %}<span class="muted">None</span>{% endif %}</td><td>{% if item.household_attribution == 'RESOLVED' %}{{ badge('complete', attributions[item.household_attribution]) }}{% else %}{{ badge('incomplete', attributions[item.household_attribution]) }}{% endif %}</td></tr>{% endfor %}</tbody>
+</table></div>{% else %}<p class="small">This run left no expected account unavailable.</p>{% endif %}
+{{ counts(data.affected_accounts, 'affected accounts') }}
+</section>
+<section class="card" aria-labelledby="households-title"><h2 id="households-title">Households affected</h2>
+<p class="help">Each household's completeness on {{ data.business_date|long_date }} comes from the governed <span class="mono">get_data_quality_report</span> at that date, a result of its own; the run's impact values nothing.</p>
+{% if quality and quality.error %}<div class="note n-break" role="alert">{{ icon('break') }}<div><strong>Completeness unavailable</strong><p><span class="mono">{{ quality.error.code }}</span> · {{ quality.error.message }}</p></div></div>{% endif %}
+{% if households %}<div class="table-scroll" tabindex="0" role="region" aria-labelledby="households-title"><table class="data">
+<thead><tr><th scope="col">Household</th><th scope="col">Completeness</th><th scope="col" class="num">Missing components</th><th scope="col" class="num">Warnings</th></tr></thead>
+<tbody>{% for row in households %}<tr><td class="mono">{{ row.household_id }}</td>
+{% if row.item %}<td>{{ state(row.state) }}</td><td class="num">{{ row.item.missing_component_count }}</td><td class="num">{{ row.item.warning_count }}</td>
+{% else %}<td colspan="3" class="muted">{% if row.state == 'NOT_RETURNED_CAPPED' %}Not among the quality report's first 20 households{% else %}Not returned by the quality report{% endif %}</td>{% endif %}</tr>{% endfor %}</tbody>
+</table></div>{% else %}<p class="small">No household is attributed to this run's affected accounts.</p>{% endif %}
+{{ counts(data.affected_households, 'affected households') }}
+{% if quality and quality.error is none and quality.quality_flags %}<h3 class="label">Quality report warnings</h3>
+<p class="help">Every flag the quality report returned for {{ quality.valuation_date|long_date }}, each with its subject. The run's own reason codes are in the accounts table above.</p>
+{% with flags = quality.quality_flags %}{% include "partials/flags.html" %}{% endwith %}{% endif %}
+</section>
+{% endif %}
+{% endif %}
+{% if impact or health %}<details><summary>Governed result envelopes</summary>{% if health %}<pre>{{ health|json_text }}</pre>{% endif %}{% if impact %}<pre>{{ impact|json_text }}</pre>{% endif %}{% if quality %}<pre>{{ quality|json_text }}</pre>{% endif %}</details>{% endif %}
+{% endblock %}
