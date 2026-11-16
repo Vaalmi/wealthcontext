@@ -22,9 +22,9 @@ five-minute tour needs no API key. All households, people, prices and trades are
 synthetic. It is a demonstration, not a production system, and it makes no regulatory
 compliance claim ([limitations](docs/LIMITATIONS.md)).
 
-<a href="https://www.youtube.com/watch?v=ukqezxdN5JE"><img src="https://i.ytimg.com/vi/ukqezxdN5JE/maxresdefault.jpg" alt="Video on YouTube: Where did that number come from? AI you can audit in wealth management." width="760"></a>
+<a href="https://www.youtube.com/watch?v=K7m0SB4hARc"><img src="https://i.ytimg.com/vi/K7m0SB4hARc/maxresdefault.jpg" alt="Video on YouTube: Where did that number come from? AI you can audit in wealth management." width="760"></a>
 
-*▶ [Watch the video on YouTube](https://www.youtube.com/watch?v=ukqezxdN5JE): "Where did
+*▶ [Watch the video on YouTube](https://www.youtube.com/watch?v=K7m0SB4hARc): "Where did
 that number come from? AI you can audit in wealth management".*
 
 <a href="docs/figures/screens/evidence.png"><img src="docs/figures/screens/evidence.png" alt="The workbench showing a verified answer about household assets, with the evidence drawer open on the claim, the governed result and the received feed records behind it." width="760"></a>
